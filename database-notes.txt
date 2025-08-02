@@ -1,0 +1,380 @@
+// Optikai Weboldal Adatbázis Séma
+// Használat: Másold be ezt a kódot a dbdiagram.io-ra
+
+Project optika_weboldal {
+  database_type: 'MySQL'
+  Note: '''
+    # Optikai Weboldal Adatbázis
+    Modern optikai szolgáltató weboldal adatbázis terve
+    - Időpontfoglalás
+    - Szemvizsgálat eredmények
+    - Termék katalógus
+    - Rendeléskezelés
+    - CMS funkcionalitás
+  '''
+}
+
+// =======================
+// FELHASZNÁLÓK ÉS JOGOSULTSÁGOK
+// =======================
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  email varchar(255) [unique, not null]
+  email_verified_at timestamp
+  password varchar(255) [not null]
+  phone varchar(20)
+  birth_date date
+  address text
+  role enum('admin', 'staff', 'customer') [default: 'customer']
+  is_active boolean [default: true]
+  remember_token varchar(100)
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Főfelhasználó tábla - adminok, munkatársak, ügyfelek'
+}
+
+Table user_profiles {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id, not null]
+  avatar varchar(255)
+  insurance_number varchar(50)
+  emergency_contact_name varchar(255)
+  emergency_contact_phone varchar(20)
+  medical_notes text
+  preferred_language enum('hu', 'en', 'ro') [default: 'hu']
+  newsletter_subscription boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Kiegészítő felhasználói adatok'
+}
+
+// =======================
+// IDŐPONTFOGLALÁS RENDSZER
+// =======================
+
+Table appointment_types {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  description text
+  duration_minutes int [not null, default: 30]
+  price decimal(10,2)
+  color varchar(7) [default: '#3498db']
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Időpont típusok: szemvizsgálat, kontroll, stb.'
+}
+
+Table staff_schedules {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id, not null]
+  day_of_week tinyint [not null, note: '0=vasárnap, 1=hétfő']
+  start_time time [not null]
+  end_time time [not null]
+  break_start_time time
+  break_end_time time
+  is_active boolean [default: true]
+  valid_from date [not null]
+  valid_until date
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Munkatársak heti műszakai és szünetek'
+}
+
+Table appointments {
+  id bigint [pk, increment]
+  customer_id bigint [ref: > users.id, not null]
+  staff_id bigint [ref: > users.id, not null]
+  appointment_type_id bigint [ref: > appointment_types.id, not null]
+  appointment_date date [not null]
+  start_time time [not null]
+  end_time time [not null]
+  status enum('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show') [default: 'scheduled']
+  notes text
+  customer_notes text
+  internal_notes text
+  reminder_sent boolean [default: false]
+  confirmation_token varchar(100)
+  price decimal(10,2)
+  created_at timestamp
+  updated_at timestamp
+  cancelled_at timestamp
+
+  Note: 'Foglalt időpontok és állapotuk'
+}
+
+// =======================
+// SZEMVIZSGÁLAT ÉS EGÉSZSÉGÜGYI ADATOK
+// =======================
+
+Table eye_examinations {
+  id bigint [pk, increment]
+  appointment_id bigint [ref: > appointments.id, not null]
+  customer_id bigint [ref: > users.id, not null]
+  examiner_id bigint [ref: > users.id, not null]
+  examination_date date [not null]
+
+  // Látásélesség
+  visual_acuity_right_eye varchar(10)
+  visual_acuity_left_eye varchar(10)
+
+  // Dioptria értékek
+  sphere_right decimal(4,2)
+  cylinder_right decimal(4,2)
+  axis_right int
+  sphere_left decimal(4,2)
+  cylinder_left decimal(4,2)
+  axis_left int
+
+  // Pupillatávolság
+  pupillary_distance decimal(4,1)
+
+  // Szemnyomás
+  intraocular_pressure_right int
+  intraocular_pressure_left int
+
+  // Színlátás
+  color_vision_test_result varchar(50)
+
+  // Megjegyzések
+  examination_notes text
+  recommendations text
+  next_examination_recommended date
+
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Szemvizsgálat eredmények és dioptria értékek'
+}
+
+// =======================
+// TERMÉKEK ÉS SZOLGÁLTATÁSOK
+// =======================
+
+Table categories {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  slug varchar(255) [unique, not null]
+  description text
+  parent_id bigint [ref: > categories.id]
+  sort_order int [default: 0]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Hierarchikus kategória rendszer'
+}
+
+Table products {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  slug varchar(255) [unique, not null]
+  description text
+  short_description text
+  sku varchar(100) [unique, not null]
+  price decimal(10,2) [not null]
+  sale_price decimal(10,2)
+  stock_quantity int [default: 0]
+  manage_stock boolean [default: true]
+  brand varchar(255)
+  model varchar(255)
+  frame_material varchar(100)
+  lens_type varchar(100)
+  frame_color varchar(50)
+  frame_size varchar(20)
+  gender enum('unisex', 'male', 'female', 'kids') [default: 'unisex']
+  age_group enum('adult', 'teen', 'child') [default: 'adult']
+  is_prescription boolean [default: false]
+  is_sunglasses boolean [default: false]
+  is_active boolean [default: true]
+  featured boolean [default: false]
+  meta_title varchar(255)
+  meta_description text
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Termék katalógus - keretek, lencsék, kiegészítők'
+}
+
+Table product_categories {
+  id bigint [pk, increment]
+  product_id bigint [ref: > products.id, not null]
+  category_id bigint [ref: > categories.id, not null]
+
+  indexes {
+    (product_id, category_id) [unique]
+  }
+
+  Note: 'Termék-kategória kapcsolótábla'
+}
+
+Table product_images {
+  id bigint [pk, increment]
+  product_id bigint [ref: > products.id, not null]
+  image_path varchar(255) [not null]
+  alt_text varchar(255)
+  sort_order int [default: 0]
+  is_primary boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Termék képek kezelése'
+}
+
+// =======================
+// RENDELÉSEK ÉS ÉRTÉKESÍTÉS
+// =======================
+
+Table orders {
+  id bigint [pk, increment]
+  customer_id bigint [ref: > users.id, not null]
+  order_number varchar(50) [unique, not null]
+  status enum('pending', 'processing', 'ready', 'completed', 'cancelled') [default: 'pending']
+
+  // Árak
+  subtotal decimal(10,2) [not null]
+  tax_amount decimal(10,2) [default: 0]
+  discount_amount decimal(10,2) [default: 0]
+  total_amount decimal(10,2) [not null]
+
+  // Szállítási adatok
+  shipping_name varchar(255) [not null]
+  shipping_email varchar(255) [not null]
+  shipping_phone varchar(20)
+  shipping_address text [not null]
+
+  // Számlázási adatok
+  billing_name varchar(255) [not null]
+  billing_address text [not null]
+  billing_same_as_shipping boolean [default: true]
+
+  // Megjegyzések
+  customer_notes text
+  admin_notes text
+
+  // Időpontok
+  ordered_at timestamp [not null]
+  estimated_ready_date date
+  completed_at timestamp
+
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Rendelések főtáblája'
+}
+
+Table order_items {
+  id bigint [pk, increment]
+  order_id bigint [ref: > orders.id, not null]
+  product_id bigint [ref: > products.id, not null]
+  examination_id bigint [ref: > eye_examinations.id]
+  quantity int [not null, default: 1]
+  unit_price decimal(10,2) [not null]
+  total_price decimal(10,2) [not null]
+
+  // Dioptriás adatok
+  prescription_right_sphere decimal(4,2)
+  prescription_right_cylinder decimal(4,2)
+  prescription_right_axis int
+  prescription_left_sphere decimal(4,2)
+  prescription_left_cylinder decimal(4,2)
+  prescription_left_axis int
+  pupillary_distance decimal(4,1)
+
+  // Egyéb specifikációk
+  lens_type varchar(100)
+  lens_coating varchar(100)
+  special_instructions text
+
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Rendelés tételek dioptriás adatokkal'
+}
+
+// =======================
+// CMS ÉS TARTALOMKEZELÉS
+// =======================
+
+Table pages {
+  id bigint [pk, increment]
+  title varchar(255) [not null]
+  slug varchar(255) [unique, not null]
+  content longtext [not null]
+  excerpt text
+  featured_image varchar(255)
+  status enum('draft', 'published', 'private') [default: 'draft']
+  template varchar(100) [default: 'default']
+  meta_title varchar(255)
+  meta_description text
+  sort_order int [default: 0]
+  author_id bigint [ref: > users.id, not null]
+  published_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Statikus oldalak (rólunk, szolgáltatások, stb.)'
+}
+
+Table blog_posts {
+  id bigint [pk, increment]
+  title varchar(255) [not null]
+  slug varchar(255) [unique, not null]
+  content longtext [not null]
+  excerpt text
+  featured_image varchar(255)
+  status enum('draft', 'published', 'private') [default: 'draft']
+  author_id bigint [ref: > users.id, not null]
+  category_id bigint [ref: > categories.id]
+  tags json
+  view_count int [default: 0]
+  meta_title varchar(255)
+  meta_description text
+  published_at timestamp
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Blog bejegyzések és hírek'
+}
+
+// =======================
+// RENDSZERBEÁLLÍTÁSOK
+// =======================
+
+Table settings {
+  id bigint [pk, increment]
+  key varchar(255) [unique, not null]
+  value longtext
+  type enum('string', 'integer', 'boolean', 'json', 'text') [default: 'string']
+  group_name varchar(100) [default: 'general']
+  description text
+  is_public boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Rendszer konfigurációs beállítások'
+}
+
+Table contact_messages {
+  id bigint [pk, increment]
+  name varchar(255) [not null]
+  email varchar(255) [not null]
+  phone varchar(20)
+  subject varchar(255) [not null]
+  message text [not null]
+  status enum('new', 'read', 'replied', 'archived') [default: 'new']
+  ip_address varchar(45)
+  user_agent text
+  replied_at timestamp
+  replied_by bigint [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Kapcsolati űrlap üzenetek'
+}
