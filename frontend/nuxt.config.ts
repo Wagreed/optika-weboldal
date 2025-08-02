@@ -4,11 +4,12 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    '@nuxt/ui',
-    '@nuxt/content',
-    '@nuxt/test-utils',
-    '@nuxt/image',
+    '@unocss/nuxt',        // Tailwind helyett
     '@nuxt/eslint',
-    '@nuxt/scripts'
+    '@nuxt/fonts',
+    '@nuxt/icon',
+    '@nuxt/image',
+    '@nuxt/test-utils',
+    '@nuxt/ui'
   ]
 })
