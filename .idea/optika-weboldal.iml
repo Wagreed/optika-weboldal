@@ -122,6 +122,37 @@
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/tijsverkoyen/css-to-inline-styles" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/backend/vendor/voku/portable-ascii" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/anourvalar/eloquent-serialize" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/bezhansalleh/filament-language-switch" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/bezhansalleh/filament-shield" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/blade-ui-kit/blade-heroicons" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/blade-ui-kit/blade-icons" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/danharrin/date-format-converter" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/danharrin/livewire-rate-limiting" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/doctrine/dbal" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/doctrine/deprecations" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/actions" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/filament" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/forms" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/infolists" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/notifications" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/spatie-laravel-translatable-plugin" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/support" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/tables" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/filament/widgets" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/kirschbaum-development/eloquent-power-joins" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/league/csv" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/livewire/livewire" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/masterminds/html5" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/openspout/openspout" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/psr/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/ryangjchandler/blade-capture-directive" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/spatie/color" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/spatie/invade" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/spatie/laravel-package-tools" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/spatie/laravel-permission" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/spatie/laravel-translatable" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/vendor/symfony/html-sanitizer" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

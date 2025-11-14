@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'birth_date',
+        'address',
+        'is_active',
     ];
 
     /**
@@ -43,6 +48,56 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birth_date' => 'date',
+            'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the user's profile.
+     */
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    /**
+     * Get the user's appointments as a customer.
+     */
+    public function customerAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'customer_id');
+    }
+
+    /**
+     * Get the user's appointments as staff.
+     */
+    public function staffAppointments()
+    {
+        return $this->hasMany(Appointment::class, 'staff_id');
+    }
+
+    /**
+     * Get the user's staff schedules.
+     */
+    public function staffSchedules()
+    {
+        return $this->hasMany(StaffSchedule::class);
+    }
+
+    /**
+     * Get the user's eye examinations as a customer.
+     */
+    public function eyeExaminations()
+    {
+        return $this->hasMany(EyeExamination::class, 'customer_id');
+    }
+
+    /**
+     * Get the user's orders.
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'customer_id');
     }
 }
