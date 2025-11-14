@@ -28,13 +28,18 @@ class CategoryResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->required(),
                 Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('parent_id')
-                    ->numeric(),
+                    ->columnSpanFull()
+                    ->label('Leírás'),
+                Forms\Components\Select::make('parent_id')
+                    ->relationship('parent', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Szülő kategória'),
                 Forms\Components\TextInput::make('sort_order')
                     ->required()
                     ->numeric()
-                    ->default(0),
+                    ->default(0)
+                    ->label('Sorrend'),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
             ]);
@@ -48,12 +53,14 @@ class CategoryResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('parent_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('parent.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Szülő kategória'),
                 Tables\Columns\TextColumn::make('sort_order')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Sorrend'),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')

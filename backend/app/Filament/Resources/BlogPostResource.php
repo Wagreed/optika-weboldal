@@ -33,14 +33,28 @@ class BlogPostResource extends Resource
                 Forms\Components\Textarea::make('excerpt')
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('featured_image')
-                    ->image(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('author_id')
+                    ->image()
+                    ->label('Kiemelt kép'),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'draft' => 'Piszkozat',
+                        'published' => 'Publikált',
+                        'scheduled' => 'Ütemezett',
+                        'archived' => 'Archivált',
+                    ])
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('category_id')
-                    ->numeric(),
+                    ->label('Státusz'),
+                Forms\Components\Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->label('Szerző'),
+                Forms\Components\Select::make('category_id')
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Kategória'),
                 Forms\Components\Textarea::make('tags')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('view_count')
@@ -62,15 +76,26 @@ class BlogPostResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('featured_image'),
+                Tables\Columns\ImageColumn::make('featured_image')
+                    ->label('Kiemelt kép'),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('author_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('category_id')
-                    ->numeric()
-                    ->sortable(),
+                    ->badge()
+                    ->colors([
+                        'secondary' => 'draft',
+                        'success' => 'published',
+                        'warning' => 'scheduled',
+                        'danger' => 'archived',
+                    ])
+                    ->searchable()
+                    ->label('Státusz'),
+                Tables\Columns\TextColumn::make('author.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Szerző'),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Kategória'),
                 Tables\Columns\TextColumn::make('view_count')
                     ->numeric()
                     ->sortable(),

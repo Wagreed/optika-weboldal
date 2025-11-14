@@ -23,17 +23,28 @@ class EyeExaminationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('appointment_id')
+                Forms\Components\Select::make('appointment_id')
+                    ->relationship('appointment', 'id')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->customer->name} - {$record->appointment_date}")
+                    ->searchable()
+                    ->preload()
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('customer_id')
+                    ->label('Időpont'),
+                Forms\Components\Select::make('customer_id')
+                    ->relationship('customer', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('examiner_id')
+                    ->label('Páciens'),
+                Forms\Components\Select::make('examiner_id')
+                    ->relationship('examiner', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required()
-                    ->numeric(),
+                    ->label('Vizsgáló'),
                 Forms\Components\DatePicker::make('examination_date')
-                    ->required(),
+                    ->required()
+                    ->label('Vizsgálat dátuma'),
                 Forms\Components\TextInput::make('visual_acuity_right_eye'),
                 Forms\Components\TextInput::make('visual_acuity_left_eye'),
                 Forms\Components\TextInput::make('sphere_right')
@@ -67,17 +78,17 @@ class EyeExaminationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('appointment_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('customer_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('examiner_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('customer.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Páciens'),
+                Tables\Columns\TextColumn::make('examiner.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Vizsgáló'),
                 Tables\Columns\TextColumn::make('examination_date')
                     ->date()
+                    ->label('Vizsgálat dátuma')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('visual_acuity_right_eye')
                     ->searchable(),

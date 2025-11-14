@@ -33,21 +33,35 @@ class PageResource extends Resource
                 Forms\Components\Textarea::make('excerpt')
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('featured_image')
-                    ->image(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
+                    ->image()
+                    ->label('Kiemelt kép'),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'draft' => 'Piszkozat',
+                        'published' => 'Publikált',
+                        'archived' => 'Archivált',
+                    ])
+                    ->required()
+                    ->label('Státusz'),
                 Forms\Components\TextInput::make('template')
-                    ->required(),
-                Forms\Components\TextInput::make('meta_title'),
+                    ->required()
+                    ->label('Sablon'),
+                Forms\Components\TextInput::make('meta_title')
+                    ->label('Meta cím'),
                 Forms\Components\Textarea::make('meta_description')
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label('Meta leírás'),
                 Forms\Components\TextInput::make('sort_order')
                     ->required()
                     ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('author_id')
+                    ->default(0)
+                    ->label('Sorrend'),
+                Forms\Components\Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required()
-                    ->numeric(),
+                    ->label('Szerző'),
                 Forms\Components\DateTimePicker::make('published_at'),
             ]);
     }
@@ -60,19 +74,28 @@ class PageResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('featured_image'),
+                Tables\Columns\ImageColumn::make('featured_image')
+                    ->label('Kiemelt kép'),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                    ->badge()
+                    ->colors([
+                        'secondary' => 'draft',
+                        'success' => 'published',
+                        'danger' => 'archived',
+                    ])
+                    ->searchable()
+                    ->label('Státusz'),
                 Tables\Columns\TextColumn::make('template')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('meta_title')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Sablon'),
                 Tables\Columns\TextColumn::make('sort_order')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('author_id')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Sorrend'),
+                Tables\Columns\TextColumn::make('author.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Szerző'),
                 Tables\Columns\TextColumn::make('published_at')
                     ->dateTime()
                     ->sortable(),

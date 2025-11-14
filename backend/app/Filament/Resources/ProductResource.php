@@ -51,12 +51,27 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('model'),
                 Forms\Components\TextInput::make('frame_material'),
                 Forms\Components\TextInput::make('lens_type'),
-                Forms\Components\TextInput::make('frame_color'),
-                Forms\Components\TextInput::make('frame_size'),
-                Forms\Components\TextInput::make('gender')
-                    ->required(),
-                Forms\Components\TextInput::make('age_group')
-                    ->required(),
+                Forms\Components\TextInput::make('frame_color')
+                    ->label('Keret szín'),
+                Forms\Components\TextInput::make('frame_size')
+                    ->label('Keret méret'),
+                Forms\Components\Select::make('gender')
+                    ->options([
+                        'male' => 'Férfi',
+                        'female' => 'Női',
+                        'unisex' => 'Uniszex',
+                        'kids' => 'Gyerek',
+                    ])
+                    ->required()
+                    ->label('Nem'),
+                Forms\Components\Select::make('age_group')
+                    ->options([
+                        'adult' => 'Felnőtt',
+                        'child' => 'Gyerek',
+                        'senior' => 'Idős',
+                    ])
+                    ->required()
+                    ->label('Korosztály'),
                 Forms\Components\Toggle::make('is_prescription')
                     ->required(),
                 Forms\Components\Toggle::make('is_sunglasses')

@@ -34,15 +34,29 @@ class ContactMessageResource extends Resource
                     ->required(),
                 Forms\Components\Textarea::make('message')
                     ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('ip_address'),
+                    ->columnSpanFull()
+                    ->label('Üzenet'),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'new' => 'Új',
+                        'read' => 'Olvasott',
+                        'replied' => 'Válaszolt',
+                        'archived' => 'Archivált',
+                    ])
+                    ->required()
+                    ->label('Státusz'),
+                Forms\Components\TextInput::make('ip_address')
+                    ->label('IP cím'),
                 Forms\Components\Textarea::make('user_agent')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('replied_at'),
-                Forms\Components\TextInput::make('replied_by')
-                    ->numeric(),
+                    ->columnSpanFull()
+                    ->label('Böngésző'),
+                Forms\Components\DateTimePicker::make('replied_at')
+                    ->label('Válaszolva'),
+                Forms\Components\Select::make('replied_by')
+                    ->relationship('repliedBy', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Válaszolta'),
             ]);
     }
 
@@ -59,15 +73,23 @@ class ContactMessageResource extends Resource
                 Tables\Columns\TextColumn::make('subject')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('ip_address')
-                    ->searchable(),
+                    ->badge()
+                    ->colors([
+                        'info' => 'new',
+                        'warning' => 'read',
+                        'success' => 'replied',
+                        'secondary' => 'archived',
+                    ])
+                    ->searchable()
+                    ->label('Státusz'),
                 Tables\Columns\TextColumn::make('replied_at')
                     ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('replied_by')
-                    ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Válaszolva'),
+                Tables\Columns\TextColumn::make('repliedBy.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Válaszolta'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

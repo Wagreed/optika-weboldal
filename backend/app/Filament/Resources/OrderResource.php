@@ -23,13 +23,25 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('customer_id')
+                Forms\Components\Select::make('customer_id')
+                    ->relationship('customer', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required()
-                    ->numeric(),
+                    ->label('Vásárló'),
                 Forms\Components\TextInput::make('order_number')
-                    ->required(),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
+                    ->required()
+                    ->label('Rendelésszám'),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'pending' => 'Függőben',
+                        'processing' => 'Feldolgozás alatt',
+                        'ready' => 'Kész',
+                        'completed' => 'Teljesítve',
+                        'cancelled' => 'Törölve',
+                    ])
+                    ->required()
+                    ->label('Státusz'),
                 Forms\Components\TextInput::make('subtotal')
                     ->required()
                     ->numeric()
@@ -80,13 +92,24 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('customer_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('customer.name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Vásárló'),
                 Tables\Columns\TextColumn::make('order_number')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Rendelésszám'),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                    ->badge()
+                    ->colors([
+                        'warning' => 'pending',
+                        'primary' => 'processing',
+                        'info' => 'ready',
+                        'success' => 'completed',
+                        'danger' => 'cancelled',
+                    ])
+                    ->searchable()
+                    ->label('Státusz'),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->money('RON')
                     ->sortable(),
