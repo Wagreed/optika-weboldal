@@ -3,7 +3,8 @@
     <!-- Navigációs menü - Sticky -->
     <nav class="sticky top-0 z-50 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white shadow-lg">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
           <div class="flex items-center">
             <NuxtLink
               to="/"
@@ -13,7 +14,7 @@
             </NuxtLink>
           </div>
 
-          <!-- Desktop menü -->
+          <!-- Desktop menü középen -->
           <div class="hidden md:flex items-center space-x-2">
             <NuxtLink
               to="/"
@@ -43,33 +44,33 @@
             >
               Kapcsolat
             </NuxtLink>
+          </div>
 
-            <!-- Auth linkek -->
-            <div class="flex items-center space-x-2 ml-4 pl-4 border-l border-blue-700">
-              <template v-if="isLoggedIn">
-                <span class="text-white text-sm">{{ user?.name }}</span>
-                <NuxtLink
-                  to="/profile"
-                  class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
-                >
-                  Profilom
-                </NuxtLink>
-              </template>
-              <template v-else>
-                <NuxtLink
-                  to="/login"
-                  class="text-white no-underline font-medium px-4 py-2 rounded-lg hover:bg-blue-800 hover:scale-105 transition-all duration-300"
-                >
-                  Bejelentkezés
-                </NuxtLink>
-                <NuxtLink
-                  to="/register"
-                  class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
-                >
-                  Regisztráció
-                </NuxtLink>
-              </template>
-            </div>
+          <!-- Auth linkek jobbra -->
+          <div class="hidden md:flex items-center space-x-2">
+            <template v-if="isLoggedIn">
+              <span class="text-white text-sm mr-2">{{ user?.name }}</span>
+              <NuxtLink
+                to="/profile"
+                class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
+              >
+                Profilom
+              </NuxtLink>
+            </template>
+            <template v-else>
+              <NuxtLink
+                to="/login"
+                class="text-white no-underline font-medium px-4 py-2 rounded-lg hover:bg-blue-800 hover:scale-105 transition-all duration-300"
+              >
+                Bejelentkezés
+              </NuxtLink>
+              <NuxtLink
+                to="/register"
+                class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
+              >
+                Regisztráció
+              </NuxtLink>
+            </template>
           </div>
 
           <!-- Mobil hamburger gomb -->
