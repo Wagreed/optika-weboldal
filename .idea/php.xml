@@ -160,6 +160,7 @@
       <path value="$PROJECT_DIR$/backend/vendor/filament/spatie-laravel-translatable-plugin" />
       <path value="$PROJECT_DIR$/backend/vendor/spatie/laravel-translatable" />
       <path value="$PROJECT_DIR$/backend/vendor/bezhansalleh/filament-language-switch" />
+      <path value="$PROJECT_DIR$/backend/vendor/laravel/sanctum" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

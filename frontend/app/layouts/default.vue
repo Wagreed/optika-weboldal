@@ -43,6 +43,33 @@
             >
               Kapcsolat
             </NuxtLink>
+
+            <!-- Auth linkek -->
+            <div class="flex items-center space-x-2 ml-4 pl-4 border-l border-blue-700">
+              <template v-if="isLoggedIn">
+                <span class="text-white text-sm">{{ user?.name }}</span>
+                <NuxtLink
+                  to="/profile"
+                  class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
+                >
+                  Profilom
+                </NuxtLink>
+              </template>
+              <template v-else>
+                <NuxtLink
+                  to="/login"
+                  class="text-white no-underline font-medium px-4 py-2 rounded-lg hover:bg-blue-800 hover:scale-105 transition-all duration-300"
+                >
+                  Bejelentkezés
+                </NuxtLink>
+                <NuxtLink
+                  to="/register"
+                  class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
+                >
+                  Regisztráció
+                </NuxtLink>
+              </template>
+            </div>
           </div>
 
           <!-- Mobil hamburger gomb -->
@@ -125,6 +152,38 @@
             >
               Kapcsolat
             </NuxtLink>
+
+            <!-- Auth linkek mobil -->
+            <div class="border-t border-blue-700 pt-2 mt-2">
+              <template v-if="isLoggedIn">
+                <div class="px-4 py-2 text-white text-sm">
+                  {{ user?.name }}
+                </div>
+                <NuxtLink
+                  to="/profile"
+                  @click="mobileMenuOpen = false"
+                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 transition-all duration-300"
+                >
+                  Profilom
+                </NuxtLink>
+              </template>
+              <template v-else>
+                <NuxtLink
+                  to="/login"
+                  @click="mobileMenuOpen = false"
+                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
+                >
+                  Bejelentkezés
+                </NuxtLink>
+                <NuxtLink
+                  to="/register"
+                  @click="mobileMenuOpen = false"
+                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 transition-all duration-300"
+                >
+                  Regisztráció
+                </NuxtLink>
+              </template>
+            </div>
           </div>
         </div>
       </transition>
@@ -147,4 +206,7 @@
 <script setup>
 // Mobil menü állapot
 const mobileMenuOpen = ref(false)
+
+// Auth state
+const { user, isLoggedIn } = useAuth()
 </script>

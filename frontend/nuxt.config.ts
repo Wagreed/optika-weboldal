@@ -11,5 +11,11 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/test-utils'
     // '@nuxt/ui' - temporarily disabled due to Tailwind conflict
-  ]
+  ],
+
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+    },
+  },
 })

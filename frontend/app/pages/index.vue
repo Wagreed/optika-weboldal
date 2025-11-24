@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen">
+  <div>
     <!-- Hero szekció -->
     <section class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -9,12 +9,28 @@
         <p class="text-xl mb-8">
           Professzionális szemészeti szolgáltatások és kiváló minőségű szemüvegek
         </p>
-        <NuxtLink
-          to="/contact"
-          class="bg-white text-blue-900 no-underline px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition inline-block"
-        >
-          Foglaljon időpontot
-        </NuxtLink>
+        <div class="flex gap-4 justify-center flex-wrap">
+          <NuxtLink
+            to="/contact"
+            class="bg-white text-blue-900 no-underline px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition inline-block"
+          >
+            Foglaljon időpontot
+          </NuxtLink>
+          <NuxtLink
+            v-if="!isLoggedIn"
+            to="/register"
+            class="bg-green-600 text-white no-underline px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition inline-block"
+          >
+            Regisztráció
+          </NuxtLink>
+          <NuxtLink
+            v-if="isLoggedIn"
+            to="/profile"
+            class="bg-green-600 text-white no-underline px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition inline-block"
+          >
+            Profilom
+          </NuxtLink>
+        </div>
       </div>
     </section>
 
@@ -86,6 +102,8 @@
 </template>
 
 <script setup>
+const { isLoggedIn } = useAuth()
+
 useHead({
   title: 'Főoldal - Optika'
 })
