@@ -31,7 +31,9 @@ class UserResource extends Resource
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required(),
+                    ->required()
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->hiddenOn('edit'),
                 Forms\Components\TextInput::make('phone')
                     ->tel(),
                 Forms\Components\DatePicker::make('birth_date'),
