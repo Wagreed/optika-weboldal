@@ -44,6 +44,7 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user->load('profile'),
+            'roles' => $user->getRoleNames()->toArray(),
             'token' => $token,
             'message' => 'Sikeres regisztráció!'
         ], 201);
@@ -77,6 +78,7 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user->load('profile'),
+            'roles' => $user->getRoleNames()->toArray(),
             'token' => $token,
             'message' => 'Sikeres bejelentkezés!'
         ]);
@@ -99,8 +101,10 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
+        $user = $request->user();
         return response()->json([
-            'user' => $request->user()->load('profile')
+            'user' => $user->load('profile'),
+            'roles' => $user->getRoleNames()->toArray()
         ]);
     }
 }

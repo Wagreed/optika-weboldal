@@ -131,7 +131,10 @@ const handleRegister = async () => {
   const result = await register(form.value)
 
   if (result.success) {
-    router.push('/profile')
+    // Ha admin/staff, akkor a register függvény már átirányított
+    if (!result.redirectToAdmin) {
+      router.push('/profile')
+    }
   } else {
     errorMessage.value = result.message || 'Regisztráció sikertelen'
   }

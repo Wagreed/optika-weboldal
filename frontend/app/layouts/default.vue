@@ -46,31 +46,77 @@
             </NuxtLink>
           </div>
 
-          <!-- Auth linkek jobbra -->
-          <div class="hidden md:flex items-center space-x-2">
-            <template v-if="isLoggedIn">
-              <span class="text-white text-sm mr-2">{{ user?.name }}</span>
-              <NuxtLink
-                to="/profile"
-                class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
+          <!-- Auth dropdown jobbra -->
+          <div class="hidden md:flex items-center relative">
+            <button
+              @click="userMenuOpen = !userMenuOpen"
+              class="flex items-center gap-2 px-3 py-2 bg-blue-700 rounded-lg hover:bg-blue-600 transition-all duration-300"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span v-if="isLoggedIn" class="text-white text-sm font-medium">{{ user?.name }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white transition-transform duration-300" :class="{ 'rotate-180': userMenuOpen }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <transition
+              enter-active-class="transition ease-out duration-200"
+              enter-from-class="opacity-0 scale-95"
+              enter-to-class="opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-150"
+              leave-from-class="opacity-100 scale-100"
+              leave-to-class="opacity-0 scale-95"
+            >
+              <div
+                v-if="userMenuOpen"
+                class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
               >
-                Profilom
-              </NuxtLink>
-            </template>
-            <template v-else>
-              <NuxtLink
-                to="/login"
-                class="text-white no-underline font-medium px-4 py-2 rounded-lg hover:bg-blue-800 hover:scale-105 transition-all duration-300"
-              >
-                Bejelentkezés
-              </NuxtLink>
-              <NuxtLink
-                to="/register"
-                class="text-white no-underline font-medium px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-300"
-              >
-                Regisztráció
-              </NuxtLink>
-            </template>
+                <template v-if="!isLoggedIn">
+                  <NuxtLink
+                    to="/login"
+                    @click="userMenuOpen = false"
+                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
+                  >
+                    Bejelentkezés
+                  </NuxtLink>
+                  <NuxtLink
+                    to="/register"
+                    @click="userMenuOpen = false"
+                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
+                  >
+                    Regisztráció
+                  </NuxtLink>
+                </template>
+                <template v-else>
+                  <a
+                    v-if="isAdminOrStaff"
+                    :href="adminPanelUrl"
+                    target="_blank"
+                    @click="userMenuOpen = false"
+                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
+                  >
+                    Admin Panel
+                  </a>
+                  <NuxtLink
+                    v-else
+                    to="/profile"
+                    @click="userMenuOpen = false"
+                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
+                  >
+                    Profil
+                  </NuxtLink>
+                  <button
+                    @click="handleLogout"
+                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    Kijelentkezés
+                  </button>
+                </template>
+              </div>
+            </transition>
           </div>
 
           <!-- Mobil hamburger gomb -->
@@ -156,19 +202,15 @@
 
             <!-- Auth linkek mobil -->
             <div class="border-t border-blue-700 pt-2 mt-2">
-              <template v-if="isLoggedIn">
-                <div class="px-4 py-2 text-white text-sm">
-                  {{ user?.name }}
-                </div>
-                <NuxtLink
-                  to="/profile"
-                  @click="mobileMenuOpen = false"
-                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 transition-all duration-300"
-                >
-                  Profilom
-                </NuxtLink>
-              </template>
-              <template v-else>
+              <div class="flex items-center gap-2 px-4 py-3 bg-blue-700 rounded-lg mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span v-if="isLoggedIn" class="text-white text-sm font-medium">{{ user?.name }}</span>
+                <span v-else class="text-white text-sm font-medium">Fiók</span>
+              </div>
+
+              <template v-if="!isLoggedIn">
                 <NuxtLink
                   to="/login"
                   @click="mobileMenuOpen = false"
@@ -179,10 +221,35 @@
                 <NuxtLink
                   to="/register"
                   @click="mobileMenuOpen = false"
-                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 transition-all duration-300"
+                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
                 >
                   Regisztráció
                 </NuxtLink>
+              </template>
+              <template v-else>
+                <a
+                  v-if="isAdminOrStaff"
+                  :href="adminPanelUrl"
+                  target="_blank"
+                  @click="mobileMenuOpen = false"
+                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
+                >
+                  Admin Panel
+                </a>
+                <NuxtLink
+                  v-else
+                  to="/profile"
+                  @click="mobileMenuOpen = false"
+                  class="block text-white no-underline font-medium px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
+                >
+                  Profil
+                </NuxtLink>
+                <button
+                  @click="handleLogout"
+                  class="block w-full text-white no-underline font-medium px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 text-left"
+                >
+                  Kijelentkezés
+                </button>
               </template>
             </div>
           </div>
@@ -207,7 +274,17 @@
 <script setup>
 // Mobil menü állapot
 const mobileMenuOpen = ref(false)
+const userMenuOpen = ref(false)
 
 // Auth state
-const { user, isLoggedIn } = useAuth()
+const { user, isLoggedIn, isAdminOrStaff, logout } = useAuth()
+const config = useRuntimeConfig()
+const adminPanelUrl = config.public.adminUrl
+
+// Logout handler
+const handleLogout = async () => {
+  mobileMenuOpen.value = false
+  userMenuOpen.value = false
+  await logout()
+}
 </script>

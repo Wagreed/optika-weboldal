@@ -213,8 +213,9 @@ definePageMeta({
   middleware: 'auth',
 })
 
-const { user, fetchUser, updateProfile, uploadAvatar, logout } = useAuth()
+const { user, fetchUser, updateProfile, uploadAvatar, logout, isAdminOrStaff, userRoles } = useAuth()
 const router = useRouter()
+const config = useRuntimeConfig()
 
 const form = ref({
   name: '',
@@ -236,6 +237,15 @@ const errorMessage = ref('')
 // Load user data on mount
 onMounted(async () => {
   await fetchUser()
+
+  // Redirect admins/staff to admin panel
+  if (isAdminOrStaff.value) {
+    const token = useCookie('auth_token')
+    const backendUrl = config.public.apiUrl.replace('/api', '')
+    window.location.href = `${backendUrl}/auth/admin-session/${token.value}`
+    return
+  }
+
   if (user.value) {
     form.value = {
       name: user.value.name || '',

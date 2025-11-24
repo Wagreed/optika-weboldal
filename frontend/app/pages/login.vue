@@ -85,7 +85,10 @@ const handleLogin = async () => {
   const result = await login(form.value)
 
   if (result.success) {
-    router.push('/profile')
+    // Ha admin/staff, akkor a login függvény már átirányított
+    if (!result.redirectToAdmin) {
+      router.push('/profile')
+    }
   } else {
     errorMessage.value = result.message || 'Bejelentkezés sikertelen'
   }

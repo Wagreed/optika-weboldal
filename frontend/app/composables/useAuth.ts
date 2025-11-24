@@ -38,9 +38,14 @@ interface LoginData {
 
 export const useAuth = () => {
   const { api } = useApi()
+  const config = useRuntimeConfig()
   const user = useState<User | null>('user', () => null)
+  const userRoles = useState<string[]>('userRoles', () => [])
   const token = useCookie('auth_token')
   const isLoggedIn = computed(() => !!token.value && !!user.value)
+  const isAdminOrStaff = computed(() => {
+    return userRoles.value.some(role => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))
+  })
 
   const register = async (data: RegisterData) => {
     try {
@@ -51,13 +56,23 @@ export const useAuth = () => {
 
       token.value = response.token
       user.value = response.user
+      userRoles.value = response.roles || []
 
-      return { success: true, message: response.message }
+      // Redirect to admin panel if user has admin or staff role
+      if (response.roles && response.roles.some((role: string) => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
+        // Redirect to special route that creates session and redirects to admin
+        const backendUrl = config.public.apiUrl.replace('/api', '')
+        window.location.href = `${backendUrl}/auth/admin-session/${response.token}`
+        return { success: true, message: response.message, redirectToAdmin: true }
+      }
+
+      return { success: true, message: response.message, redirectToAdmin: false }
     } catch (error: any) {
       return {
         success: false,
         message: error.data?.message || 'Regisztráció sikertelen',
         errors: error.data?.errors || {},
+        redirectToAdmin: false,
       }
     }
   }
@@ -71,13 +86,23 @@ export const useAuth = () => {
 
       token.value = response.token
       user.value = response.user
+      userRoles.value = response.roles || []
 
-      return { success: true, message: response.message }
+      // Redirect to admin panel if user has admin or staff role
+      if (response.roles && response.roles.some((role: string) => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
+        // Redirect to special route that creates session and redirects to admin
+        const backendUrl = config.public.apiUrl.replace('/api', '')
+        window.location.href = `${backendUrl}/auth/admin-session/${response.token}`
+        return { success: true, message: response.message, redirectToAdmin: true }
+      }
+
+      return { success: true, message: response.message, redirectToAdmin: false }
     } catch (error: any) {
       return {
         success: false,
         message: error.data?.message || 'Bejelentkezés sikertelen',
         errors: error.data?.errors || {},
+        redirectToAdmin: false,
       }
     }
   }
@@ -90,6 +115,7 @@ export const useAuth = () => {
     } finally {
       token.value = null
       user.value = null
+      userRoles.value = []
       navigateTo('/')
     }
   }
@@ -97,16 +123,19 @@ export const useAuth = () => {
   const fetchUser = async () => {
     if (!token.value) {
       user.value = null
+      userRoles.value = []
       return
     }
 
     try {
       const response = await api('/user')
       user.value = response.user
+      userRoles.value = response.roles || []
     } catch (error) {
       console.error('Fetch user error:', error)
       token.value = null
       user.value = null
+      userRoles.value = []
     }
   }
 
@@ -158,7 +187,9 @@ export const useAuth = () => {
 
   return {
     user,
+    userRoles,
     isLoggedIn,
+    isAdminOrStaff,
     register,
     login,
     logout,

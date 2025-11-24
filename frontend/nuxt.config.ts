@@ -16,6 +16,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+      adminUrl: process.env.NUXT_PUBLIC_ADMIN_URL || 'http://localhost:8000/admin',
     },
   },
 })

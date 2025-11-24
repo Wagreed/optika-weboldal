@@ -23,8 +23,16 @@
           >
             Regisztráció
           </NuxtLink>
+          <a
+            v-if="isLoggedIn && isAdminOrStaff"
+            :href="adminPanelUrl"
+            target="_blank"
+            class="bg-purple-600 text-white no-underline px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 transition inline-block"
+          >
+            Admin Panel
+          </a>
           <NuxtLink
-            v-if="isLoggedIn"
+            v-else-if="isLoggedIn"
             to="/profile"
             class="bg-green-600 text-white no-underline px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition inline-block"
           >
@@ -102,7 +110,9 @@
 </template>
 
 <script setup>
-const { isLoggedIn } = useAuth()
+const { isLoggedIn, isAdminOrStaff } = useAuth()
+const config = useRuntimeConfig()
+const adminPanelUrl = config.public.adminUrl
 
 useHead({
   title: 'Főoldal - Optika'
