@@ -64,56 +64,84 @@
             <!-- Dropdown menu -->
             <transition
               enter-active-class="transition ease-out duration-200"
-              enter-from-class="opacity-0 scale-95"
-              enter-to-class="opacity-100 scale-100"
+              enter-from-class="opacity-0 -translate-y-2"
+              enter-to-class="opacity-100 translate-y-0"
               leave-active-class="transition ease-in duration-150"
-              leave-from-class="opacity-100 scale-100"
-              leave-to-class="opacity-0 scale-95"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 -translate-y-2"
             >
               <div
                 v-if="userMenuOpen"
-                class="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
+                class="absolute right-0 top-full mt-3 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-50 overflow-hidden"
               >
                 <template v-if="!isLoggedIn">
-                  <NuxtLink
-                    to="/login"
-                    @click="userMenuOpen = false"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
-                  >
-                    Bejelentkezés
-                  </NuxtLink>
-                  <NuxtLink
-                    to="/register"
-                    @click="userMenuOpen = false"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
-                  >
-                    Regisztráció
-                  </NuxtLink>
+                  <div class="px-3 py-2 border-b border-gray-100">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Fiók kezelés</p>
+                  </div>
+                  <div class="py-1">
+                    <NuxtLink
+                      to="/login"
+                      @click="userMenuOpen = false"
+                      class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-150 no-underline group"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                      </svg>
+                      <span class="font-medium">Bejelentkezés</span>
+                    </NuxtLink>
+                    <NuxtLink
+                      to="/register"
+                      @click="userMenuOpen = false"
+                      class="flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all duration-150 no-underline group"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-400 group-hover:text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                      </svg>
+                      <span class="font-medium">Regisztráció</span>
+                    </NuxtLink>
+                  </div>
                 </template>
                 <template v-else>
-                  <a
-                    v-if="isAdminOrStaff"
-                    :href="adminPanelUrl"
-                    target="_blank"
-                    @click="userMenuOpen = false"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
-                  >
-                    Admin Panel
-                  </a>
-                  <NuxtLink
-                    v-else
-                    to="/profile"
-                    @click="userMenuOpen = false"
-                    class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors no-underline"
-                  >
-                    Profil
-                  </NuxtLink>
-                  <button
-                    @click="handleLogout"
-                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
-                  >
-                    Kijelentkezés
-                  </button>
+                  <div class="px-3 py-2 border-b border-gray-100">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Bejelentkezve</p>
+                  </div>
+                  <div class="py-1">
+                    <a
+                      v-if="isAdminOrStaff"
+                      :href="adminPanelUrl"
+                      target="_blank"
+                      @click="userMenuOpen = false"
+                      class="flex items-center px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-all duration-150 no-underline group"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-400 group-hover:text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span class="font-medium">Admin Panel</span>
+                    </a>
+                    <NuxtLink
+                      v-else
+                      to="/profile"
+                      @click="userMenuOpen = false"
+                      class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-150 no-underline group"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span class="font-medium">Profil</span>
+                    </NuxtLink>
+                  </div>
+                  <div class="border-t border-gray-100 py-1">
+                    <button
+                      @click="handleLogout"
+                      class="flex items-center w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 transition-all duration-150 group"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-red-400 group-hover:text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      <span class="font-medium">Kijelentkezés</span>
+                    </button>
+                  </div>
                 </template>
               </div>
             </transition>
