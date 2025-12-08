@@ -128,7 +128,8 @@ export const useAuth = () => {
     }
 
     try {
-      const response = await api('/user')
+      // Hozzáadunk egy timestamp paramétert, hogy elkerüljük a cache-elést
+      const response = await api(`/user?_=${Date.now()}`)
       user.value = response.user
       userRoles.value = response.roles || []
     } catch (error) {
@@ -147,6 +148,10 @@ export const useAuth = () => {
       })
 
       user.value = response.user
+
+      // Frissítjük a user adatokat a fetchUser() hívásával is,
+      // hogy biztosítsuk a cache-mentes friss adatokat
+      await fetchUser()
 
       return { success: true, message: response.message }
     } catch (error: any) {

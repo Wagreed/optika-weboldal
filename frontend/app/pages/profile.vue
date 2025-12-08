@@ -92,9 +92,13 @@
               <input
                 id="birth_date"
                 v-model="form.birth_date"
-                type="date"
+                type="text"
+                placeholder="NN/HH/ÉÉÉÉ"
+                maxlength="10"
+                @input="handleDateInput"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
+              <p class="mt-1 text-xs text-gray-500">Formátum: NN/HH/ÉÉÉÉ (pl. 15/03/1990)</p>
             </div>
 
             <div>
@@ -234,6 +238,75 @@ const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 
+// Date formatting helpers
+const formatDateForDisplay = (dateString: string) => {
+  if (!dateString) return ''
+
+  // Handle ISO datetime format (YYYY-MM-DDTHH:mm:ss.sssZ)
+  if (dateString.includes('T')) {
+    dateString = dateString.split('T')[0]
+  }
+
+  // Now split the YYYY-MM-DD format
+  const parts = dateString.split('-')
+  if (parts.length === 3) {
+    const [year, month, day] = parts
+    return `${day}/${month}/${year}`
+  }
+
+  return dateString
+}
+
+const formatDateForBackend = (dateString: string) => {
+  if (!dateString) return ''
+  // If already in YYYY-MM-DD format, return as is
+  if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) return dateString
+  // If in DD/MM/YYYY format, convert to YYYY-MM-DD
+  const parts = dateString.split('/')
+  if (parts.length === 3) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`
+  }
+  return dateString
+}
+
+// Auto-format date input as user types
+const handleDateInput = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  let value = input.value.replace(/\D/g, '') // Remove non-digits
+
+  if (value.length >= 2) {
+    value = value.slice(0, 2) + '/' + value.slice(2)
+  }
+  if (value.length >= 5) {
+    value = value.slice(0, 5) + '/' + value.slice(5, 9)
+  }
+
+  form.value.birth_date = value
+}
+
+// Helper function to load form data from user
+const loadFormData = () => {
+  if (user.value) {
+    form.value = {
+      name: user.value.name || '',
+      phone: user.value.phone || '',
+      birth_date: user.value.birth_date ? formatDateForDisplay(user.value.birth_date) : '',
+      address: user.value.address || '',
+      insurance_number: user.value.profile?.insurance_number || '',
+      emergency_contact_name: user.value.profile?.emergency_contact_name || '',
+      emergency_contact_phone: user.value.profile?.emergency_contact_phone || '',
+      medical_notes: user.value.profile?.medical_notes || '',
+      preferred_language: user.value.profile?.preferred_language || 'hu',
+      newsletter_subscription: user.value.profile?.newsletter_subscription || false,
+    }
+  }
+}
+
+// Watch for user changes and reload form
+watch(user, () => {
+  loadFormData()
+}, { deep: true })
+
 // Load user data on mount
 onMounted(async () => {
   await fetchUser()
@@ -246,20 +319,7 @@ onMounted(async () => {
     return
   }
 
-  if (user.value) {
-    form.value = {
-      name: user.value.name || '',
-      phone: user.value.phone || '',
-      birth_date: user.value.birth_date || '',
-      address: user.value.address || '',
-      insurance_number: user.value.profile?.insurance_number || '',
-      emergency_contact_name: user.value.profile?.emergency_contact_name || '',
-      emergency_contact_phone: user.value.profile?.emergency_contact_phone || '',
-      medical_notes: user.value.profile?.medical_notes || '',
-      preferred_language: user.value.profile?.preferred_language || 'hu',
-      newsletter_subscription: user.value.profile?.newsletter_subscription || false,
-    }
-  }
+  loadFormData()
 })
 
 const handleUpdate = async () => {
@@ -267,7 +327,13 @@ const handleUpdate = async () => {
   successMessage.value = ''
   errorMessage.value = ''
 
-  const result = await updateProfile(form.value)
+  // Convert date format for backend (DD/MM/YYYY -> YYYY-MM-DD)
+  const dataToSend = {
+    ...form.value,
+    birth_date: formatDateForBackend(form.value.birth_date)
+  }
+
+  const result = await updateProfile(dataToSend)
 
   if (result.success) {
     successMessage.value = result.message

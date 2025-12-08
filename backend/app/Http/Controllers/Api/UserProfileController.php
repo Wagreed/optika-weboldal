@@ -75,8 +75,11 @@ class UserProfileController extends Controller
             );
         }
 
+        // Újra lekérdezzük a user-t az adatbázisból a friss adatokkal
+        $freshUser = \App\Models\User::with('profile')->find($user->id);
+
         return response()->json([
-            'user' => $user->fresh()->load('profile'),
+            'user' => $freshUser,
             'message' => 'Profil sikeresen frissítve!'
         ]);
     }
