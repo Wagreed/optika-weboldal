@@ -3,81 +3,93 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AppointmentResource\Pages;
-use App\Filament\Resources\AppointmentResource\RelationManagers;
 use App\Models\Appointment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AppointmentResource extends Resource
 {
     protected static ?string $model = Appointment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+    protected static ?string $navigationLabel = 'Időpontok';
+    protected static ?string $navigationGroup = 'Időpontok';
+    protected static ?int $navigationSort = 10;
+    protected static ?string $modelLabel = 'Időpont';
+    protected static ?string $pluralModelLabel = 'Időpontok';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('customer_id')
-                    ->relationship('customer', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required()
-                    ->label('Kliens'),
-                Forms\Components\Select::make('staff_id')
-                    ->relationship('staff', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required()
-                    ->label('Munkatárs'),
-                Forms\Components\Select::make('appointment_type_id')
-                    ->relationship('appointmentType', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required()
-                    ->label('Időpont típusa'),
-                Forms\Components\DatePicker::make('appointment_date')
-                    ->required()
-                    ->label('Időpont dátuma'),
-                Forms\Components\TextInput::make('start_time')
-                    ->required()
-                    ->label('Kezdés'),
-                Forms\Components\TextInput::make('end_time')
-                    ->required()
-                    ->label('Befejezés'),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'scheduled' => 'Időpontfoglalva',
-                        'confirmed' => 'Megerősítve',
-                        'completed' => 'Befejezve',
-                        'cancelled' => 'Törölve',
-                        'no_show' => 'Nem jelent meg',
-                    ])
-                    ->required()
-                    ->label('Státusz'),
-                Forms\Components\Textarea::make('notes')
-                    ->columnSpanFull()
-                    ->label('Jegyzetek'),
-                Forms\Components\Textarea::make('customer_notes')
-                    ->columnSpanFull()
-                    ->label('Kliens jegyzetei'),
-                Forms\Components\Textarea::make('internal_notes')
-                    ->columnSpanFull()
-                    ->label('Belső jegyzetek'),
-                Forms\Components\Toggle::make('reminder_sent')
-                    ->required()
-                    ->label('Emlékeztető elküldve'),
-                Forms\Components\TextInput::make('price')
-                    ->numeric()
-                    ->prefix('RON')
-                    ->label('Ár'),
-                Forms\Components\DateTimePicker::make('cancelled_at')
-                    ->label('Lemondva'),
+                Forms\Components\Section::make('Időpont adatai')
+                    ->schema([
+                        Forms\Components\Select::make('customer_id')
+                            ->relationship('customer', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->label('Kliens'),
+                        Forms\Components\Select::make('staff_id')
+                            ->relationship('staff', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->label('Munkatárs'),
+                        Forms\Components\Select::make('appointment_type_id')
+                            ->relationship('appointmentType', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->label('Időpont típusa'),
+                        Forms\Components\DatePicker::make('appointment_date')
+                            ->required()
+                            ->label('Dátum'),
+                        Forms\Components\TextInput::make('start_time')
+                            ->required()
+                            ->label('Kezdés'),
+                        Forms\Components\TextInput::make('end_time')
+                            ->required()
+                            ->label('Befejezés'),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Státusz & Ár')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'scheduled' => 'Foglalva',
+                                'confirmed' => 'Megerősítve',
+                                'completed' => 'Befejezve',
+                                'cancelled' => 'Törölve',
+                                'no_show' => 'Nem jelent meg',
+                            ])
+                            ->required()
+                            ->label('Státusz'),
+                        Forms\Components\TextInput::make('price')
+                            ->numeric()
+                            ->prefix('RON')
+                            ->label('Ár'),
+                        Forms\Components\Toggle::make('reminder_sent')
+                            ->label('Emlékeztető elküldve'),
+                        Forms\Components\DateTimePicker::make('cancelled_at')
+                            ->label('Lemondva'),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Megjegyzések')
+                    ->schema([
+                        Forms\Components\Textarea::make('notes')
+                            ->label('Általános jegyzetek')
+                            ->rows(3),
+                        Forms\Components\Textarea::make('customer_notes')
+                            ->label('Kliens megjegyzései')
+                            ->rows(3),
+                        Forms\Components\Textarea::make('internal_notes')
+                            ->label('Belső jegyzetek')
+                            ->rows(3),
+                    ])->columns(2),
             ]);
     }
 
@@ -85,6 +97,12 @@ class AppointmentResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('appointment_date')
+                    ->date('Y-m-d')
+                    ->sortable()
+                    ->label('Dátum'),
+                Tables\Columns\TextColumn::make('start_time')
+                    ->label('Kezdés'),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->searchable()
                     ->sortable()
@@ -97,14 +115,6 @@ class AppointmentResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->label('Típus'),
-                Tables\Columns\TextColumn::make('appointment_date')
-                    ->date()
-                    ->sortable()
-                    ->label('Dátum'),
-                Tables\Columns\TextColumn::make('start_time')
-                    ->label('Kezdés'),
-                Tables\Columns\TextColumn::make('end_time')
-                    ->label('Befejezés'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->colors([
@@ -114,27 +124,34 @@ class AppointmentResource extends Resource
                         'danger' => 'cancelled',
                         'secondary' => 'no_show',
                     ])
-                    ->searchable()
                     ->label('Státusz'),
-                Tables\Columns\IconColumn::make('reminder_sent')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('price')
                     ->money('RON')
                     ->sortable(),
+                Tables\Columns\IconColumn::make('reminder_sent')
+                    ->boolean()
+                    ->label('Emlékeztető')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('cancelled_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('appointment_date', 'desc')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'scheduled' => 'Foglalva',
+                        'confirmed' => 'Megerősítve',
+                        'completed' => 'Befejezve',
+                        'cancelled' => 'Törölve',
+                        'no_show' => 'Nem jelent meg',
+                    ])
+                    ->label('Státusz'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -148,9 +165,7 @@ class AppointmentResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

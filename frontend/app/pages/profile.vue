@@ -39,7 +39,7 @@
               <div class="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                 <img
                   v-if="user?.profile?.avatar"
-                  :src="`http://localhost:8000/storage/${user.profile.avatar}`"
+                  :src="`${config.public.apiUrl.replace('/api', '')}/storage/${user.profile.avatar}`"
                   alt="Avatar"
                   class="h-full w-full object-cover"
                 >
@@ -93,12 +93,12 @@
                 id="birth_date"
                 v-model="form.birth_date"
                 type="text"
-                placeholder="NN/HH/ÉÉÉÉ"
+                placeholder="ZZ/LL/AAAA"
                 maxlength="10"
                 @input="handleDateInput"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
-              <p class="mt-1 text-xs text-gray-500">Formátum: NN/HH/ÉÉÉÉ (pl. 15/03/1990)</p>
+              <p class="mt-1 text-xs text-gray-500">Format: ZZ/LL/AAAA (ex. 15/03/1990)</p>
             </div>
 
             <div>

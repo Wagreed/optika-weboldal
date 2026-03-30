@@ -22,8 +22,8 @@ class CheckFilamentAccess
 
         $user = auth()->user();
 
-        // Ellenőrizzük hogy super_admin vagy staff szerepkörrel rendelkezik-e
-        if (!$user->hasRole(['super_admin', 'staff'])) {
+        // Ellenőrizzük hogy admin, super_admin vagy staff szerepkörrel rendelkezik-e
+        if (!$user->hasRole(['admin', 'super_admin', 'staff'])) {
             abort(403, 'Nincs jogosultságod az admin panel eléréséhez.');
         }
 

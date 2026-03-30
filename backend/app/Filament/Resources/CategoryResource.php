@@ -3,33 +3,33 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationLabel = 'Kategóriák';
+    protected static ?string $navigationGroup = 'Termékek & Rendelések';
+    protected static ?int $navigationSort = 60;
+    protected static ?string $modelLabel = 'Kategória';
+    protected static ?string $pluralModelLabel = 'Kategóriák';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->label('Név'),
                 Forms\Components\TextInput::make('slug')
                     ->required(),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull()
-                    ->label('Leírás'),
                 Forms\Components\Select::make('parent_id')
                     ->relationship('parent', 'name')
                     ->searchable()
@@ -41,8 +41,11 @@ class CategoryResource extends Resource
                     ->default(0)
                     ->label('Sorrend'),
                 Forms\Components\Toggle::make('is_active')
-                    ->required(),
-            ]);
+                    ->label('Aktív'),
+                Forms\Components\Textarea::make('description')
+                    ->columnSpanFull()
+                    ->label('Leírás'),
+            ])->columns(2);
     }
 
     public static function table(Table $table): Table
@@ -50,9 +53,8 @@ class CategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Név'),
                 Tables\Columns\TextColumn::make('parent.name')
                     ->searchable()
                     ->sortable()
@@ -62,18 +64,15 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->label('Sorrend'),
                 Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
+                    ->boolean()
+                    ->label('Aktív'),
+                Tables\Columns\TextColumn::make('slug')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -87,9 +86,7 @@ class CategoryResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

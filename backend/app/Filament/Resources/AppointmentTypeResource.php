@@ -3,41 +3,52 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AppointmentTypeResource\Pages;
-use App\Filament\Resources\AppointmentTypeResource\RelationManagers;
 use App\Models\AppointmentType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AppointmentTypeResource extends Resource
 {
     protected static ?string $model = AppointmentType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static ?string $navigationLabel = 'Időpont típusok';
+    protected static ?string $navigationGroup = 'Időpontok';
+    protected static ?int $navigationSort = 20;
+    protected static ?string $modelLabel = 'Időpont típus';
+    protected static ?string $pluralModelLabel = 'Időpont típusok';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('duration_minutes')
-                    ->required()
-                    ->numeric()
-                    ->default(30),
-                Forms\Components\TextInput::make('price')
-                    ->numeric()
-                    ->prefix('RON'),
-                Forms\Components\TextInput::make('color')
-                    ->required(),
-                Forms\Components\Toggle::make('is_active')
-                    ->required(),
+                Forms\Components\Section::make('Alapadatok')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->label('Név'),
+                        Forms\Components\TextInput::make('duration_minutes')
+                            ->required()
+                            ->numeric()
+                            ->default(30)
+                            ->suffix('perc')
+                            ->label('Időtartam'),
+                        Forms\Components\TextInput::make('price')
+                            ->numeric()
+                            ->prefix('RON')
+                            ->label('Ár'),
+                        Forms\Components\ColorPicker::make('color')
+                            ->required()
+                            ->label('Szín'),
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Aktív'),
+                        Forms\Components\Textarea::make('description')
+                            ->columnSpanFull()
+                            ->label('Leírás'),
+                    ])->columns(2),
             ]);
     }
 
@@ -46,28 +57,26 @@ class AppointmentTypeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Név'),
                 Tables\Columns\TextColumn::make('duration_minutes')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->suffix(' perc')
+                    ->label('Időtartam'),
                 Tables\Columns\TextColumn::make('price')
                     ->money('RON')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('color')
-                    ->searchable(),
+                    ->sortable()
+                    ->label('Ár'),
+                Tables\Columns\ColorColumn::make('color')
+                    ->label('Szín'),
                 Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
+                    ->boolean()
+                    ->label('Aktív'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -81,9 +90,7 @@ class AppointmentTypeResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

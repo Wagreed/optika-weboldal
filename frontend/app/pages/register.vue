@@ -92,7 +92,7 @@
                 v-model="form.phone"
                 type="tel"
                 class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                placeholder="+36 30 123 4567"
+                placeholder="+40 7XX XXX XXX"
               >
             </div>
           </div>
