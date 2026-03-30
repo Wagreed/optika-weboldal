@@ -2,78 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\AppointmentType;
-use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class ProductSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Seed roles, permissions and users
-        $this->call([
-            RoleAndPermissionSeeder::class,
-        ]);
-
-        // Seed appointment types
-        AppointmentType::create([
-            'name' => 'Szemvizsgálat',
-            'description' => 'Teljes körű szemvizsgálat látásjavítással',
-            'duration_minutes' => 45,
-            'price' => 8000,
-            'color' => '#3498db',
-        ]);
-
-        AppointmentType::create([
-            'name' => 'Kontroll vizsgálat',
-            'description' => 'Kontroll vizsgálat szemüveg/kontaktlencse viselők számára',
-            'duration_minutes' => 30,
-            'price' => 5000,
-            'color' => '#2ecc71',
-        ]);
-
-        AppointmentType::create([
-            'name' => 'Kontaktlencse illesztés',
-            'description' => 'Kontaktlencse illesztés és tanácsadás',
-            'duration_minutes' => 60,
-            'price' => 10000,
-            'color' => '#9b59b6',
-        ]);
-
-        // Seed categories
-        $eyeglasses = Category::create([
-            'name' => 'Szemüvegek',
-            'slug' => 'szemuvegek',
-            'description' => 'Minden típusú szemüveg',
-            'sort_order' => 1,
-        ]);
-
-        Category::create([
-            'name' => 'Dioptriás szemüvegek',
-            'slug' => 'dioptrias-szemuvegek',
-            'parent_id' => $eyeglasses->id,
-            'sort_order' => 1,
-        ]);
-
-        Category::create([
-            'name' => 'Napszemüvegek',
-            'slug' => 'napszemuvegek',
-            'parent_id' => $eyeglasses->id,
-            'sort_order' => 2,
-        ]);
-
-        $contactLenses = Category::create([
-            'name' => 'Kontaktlencsék',
-            'slug' => 'kontaktlencsek',
-            'description' => 'Minden típusú kontaktlencse',
-            'sort_order' => 2,
-        ]);
-
-        // Seed products
         $products = [
             [
                 'name' => 'Ray-Ban Aviator Classic',
@@ -82,7 +17,6 @@ class DatabaseSeeder extends Seeder
                 'short_description' => 'Ikonikus pilóta fazon, UV400 védelem, arany keret.',
                 'sku' => 'RB-AV-001',
                 'price' => 850,
-                'sale_price' => null,
                 'stock_quantity' => 15,
                 'brand' => 'Ray-Ban',
                 'model' => 'RB3025',
@@ -126,7 +60,6 @@ class DatabaseSeeder extends Seeder
                 'short_description' => 'Sport és stílus egyben, polarizált lencse.',
                 'sku' => 'OAK-HB-003',
                 'price' => 680,
-                'sale_price' => null,
                 'stock_quantity' => 12,
                 'brand' => 'Oakley',
                 'model' => 'Holbrook',
@@ -144,11 +77,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Tommy Hilfiger Elegáns Keret',
                 'slug' => 'tommy-hilfiger-elegans-keret',
-                'description' => 'Letisztult, elegáns dioptriás szemüvegkeret acetatból. Tommy Hilfiger apró logójával az oldalsó száron. Irodai és formális alkalmakra egyaránt tökéletes.',
+                'description' => 'Letisztult, elegáns dioptriás szemüvegkeret acetatból. Irodai és formális alkalmakra egyaránt tökéletes.',
                 'short_description' => 'Elegáns acetat keret, klasszikus fazon.',
                 'sku' => 'TH-EL-004',
                 'price' => 520,
-                'sale_price' => null,
                 'stock_quantity' => 25,
                 'brand' => 'Tommy Hilfiger',
                 'model' => 'TH 1520',
@@ -170,7 +102,6 @@ class DatabaseSeeder extends Seeder
                 'short_description' => 'Keretmentes titán, ultra könnyű viselet.',
                 'sku' => 'SIL-TI-005',
                 'price' => 1200,
-                'sale_price' => null,
                 'stock_quantity' => 8,
                 'brand' => 'Silhouette',
                 'model' => 'Titan Minimal Art',
@@ -188,7 +119,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Prada Oversized Cat-Eye',
                 'slug' => 'prada-oversized-cat-eye',
-                'description' => 'Divatház minőség, markáns macskaszem formával. Fekete acetat kerete és arany logója elegáns, határozott megjelenést ad. Napszemüvegként és dioptriásként is elérhető.',
+                'description' => 'Divatház minőség, markáns macskaszem formával. Fekete acetat kerete és arany logója elegáns, határozott megjelenést ad.',
                 'short_description' => 'Olasz luxus, macskaszem fazon, UV400.',
                 'sku' => 'PRA-CE-006',
                 'price' => 1450,
@@ -210,11 +141,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Nike Flexon Sport',
                 'slug' => 'nike-flexon-sport',
-                'description' => 'Sportcélokra tervezett rugalmas fémkeret, amely extrém hajlítás után is visszanyeri eredeti alakját. Könnyű, tartós, edzésekre és aktív szabadidőre tökéletes.',
+                'description' => 'Sportcélokra tervezett rugalmas fémkeret, amely extrém hajlítás után is visszanyeri eredeti alakját.',
                 'short_description' => 'Rugalmas fémkeret, sport életmódhoz.',
                 'sku' => 'NK-FL-007',
                 'price' => 390,
-                'sale_price' => null,
                 'stock_quantity' => 18,
                 'brand' => 'Nike',
                 'model' => 'Flexon 883',
@@ -232,11 +162,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Lacoste Junior Keret',
                 'slug' => 'lacoste-junior-keret',
-                'description' => 'Gyerekeknek tervezett tartós acetat keret, rugalmas szárvéggel és puha orrpárnával. Vidám színválasztékban, kisebb méretekben.',
+                'description' => 'Gyerekeknek tervezett tartós acetat keret, rugalmas szárvéggel és puha orrpárnával.',
                 'short_description' => 'Gyerek szemüveg, rugalmas és tartós.',
                 'sku' => 'LAC-JR-008',
                 'price' => 280,
-                'sale_price' => null,
                 'stock_quantity' => 22,
                 'brand' => 'Lacoste',
                 'model' => 'L3654',
@@ -258,7 +187,6 @@ class DatabaseSeeder extends Seeder
                 'short_description' => 'Kézzel gyártott olasz acetat, polarizált.',
                 'sku' => 'PER-PL-009',
                 'price' => 960,
-                'sale_price' => null,
                 'stock_quantity' => 10,
                 'brand' => 'Persol',
                 'model' => 'PO3092SM',
@@ -276,11 +204,10 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Gucci Slim Metal',
                 'slug' => 'gucci-slim-metal',
-                'description' => 'Vékony fémkeretű dioptriás szemüveg az olasz divatházból. Minimalista design, dupla orrnyereg, szembenről szinte láthatatlan keret.',
+                'description' => 'Vékony fémkeretű dioptriás szemüveg az olasz divatházból. Minimalista design, dupla orrnyereg.',
                 'short_description' => 'Vékony fém keret, minimalista luxus.',
                 'sku' => 'GUC-SL-010',
                 'price' => 1350,
-                'sale_price' => null,
                 'stock_quantity' => 7,
                 'brand' => 'Gucci',
                 'model' => 'GG0392O',
@@ -297,8 +224,9 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $productData) {
-            Product::create($productData);
+        foreach ($products as $data) {
+            // updateOrCreate hogy ne duplázódjon ha újra futtatják
+            Product::updateOrCreate(['slug' => $data['slug']], $data);
         }
     }
 }

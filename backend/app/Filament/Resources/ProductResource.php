@@ -104,6 +104,31 @@ class ProductResource extends Resource
                             ->label('Kiemelt'),
                     ])->columns(2),
 
+                Forms\Components\Section::make('Képek')
+                    ->schema([
+                        Forms\Components\Repeater::make('images')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\FileUpload::make('image_path')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('products')
+                                    ->required()
+                                    ->label('Kép'),
+                                Forms\Components\TextInput::make('alt_text')
+                                    ->label('Alt szöveg'),
+                                Forms\Components\TextInput::make('sort_order')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->label('Sorrend'),
+                                Forms\Components\Toggle::make('is_primary')
+                                    ->label('Elsődleges kép'),
+                            ])
+                            ->columns(2)
+                            ->addActionLabel('Kép hozzáadása')
+                            ->label('Termék képei'),
+                    ]),
+
                 Forms\Components\Section::make('SEO')
                     ->schema([
                         Forms\Components\TextInput::make('meta_title')

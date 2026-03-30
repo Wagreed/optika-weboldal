@@ -42,6 +42,13 @@
               Szolgáltatások
             </NuxtLink>
             <NuxtLink
+              to="/szemuvegek"
+              class="text-white no-underline font-medium px-4 py-2 rounded-lg hover:bg-blue-800 hover:scale-105 transition-all duration-300"
+              active-class="bg-blue-700 scale-105"
+            >
+              Szemüvegek
+            </NuxtLink>
+            <NuxtLink
               to="/contact"
               class="text-white no-underline font-medium px-4 py-2 rounded-lg hover:bg-blue-800 hover:scale-105 transition-all duration-300"
               active-class="bg-blue-700 scale-105"
@@ -222,6 +229,14 @@
               active-class="bg-blue-700"
             >
               Szolgáltatások
+            </NuxtLink>
+            <NuxtLink
+              to="/szemuvegek"
+              @click="mobileMenuOpen = false"
+              class="block text-white no-underline font-medium px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300"
+              active-class="bg-blue-700"
+            >
+              Szemüvegek
             </NuxtLink>
             <NuxtLink
               to="/contact"
