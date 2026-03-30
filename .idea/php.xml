@@ -161,6 +161,11 @@
       <path value="$PROJECT_DIR$/backend/vendor/spatie/laravel-translatable" />
       <path value="$PROJECT_DIR$/backend/vendor/bezhansalleh/filament-language-switch" />
       <path value="$PROJECT_DIR$/backend/vendor/laravel/sanctum" />
+      <path value="$PROJECT_DIR$/adatbazisos-projekt/vendor/mongodb/mongodb" />
+      <path value="$PROJECT_DIR$/adatbazisos-projekt/vendor/symfony/polyfill-php85" />
+      <path value="$PROJECT_DIR$/adatbazisos-projekt/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/adatbazisos-projekt/vendor/composer" />
+      <path value="$PROJECT_DIR$/backend/vendor/_laravel_idea" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

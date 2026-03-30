@@ -7,10 +7,14 @@
           <!-- Logo -->
           <div class="flex items-center">
             <NuxtLink
-              to="/"
-              class="text-2xl font-bold text-white no-underline px-3 py-2 rounded-lg hover:bg-blue-800 transition-all duration-300"
+                to="/"
+                class="flex items-center rounded-lg hover:opacity-80 transition-all duration-300"
             >
-              Optika
+              <img
+                  src="/img/logo.png"
+                  alt="Optika Logo"
+                  class="h-6 w-auto object-contain"
+              />
             </NuxtLink>
           </div>
 
