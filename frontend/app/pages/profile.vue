@@ -56,7 +56,7 @@
               >
               <button
                 type="button"
-                @click="$refs.avatarInput.click()"
+                @click="avatarInput?.click()"
                 class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 Profilkép feltöltése
@@ -213,15 +213,31 @@
 </template>
 
 <script setup lang="ts">
+import type { UserProfile } from '~/composables/useAuth'
+
 definePageMeta({
   middleware: 'auth',
 })
 
-const { user, fetchUser, updateProfile, uploadAvatar, logout, isAdminOrStaff, userRoles } = useAuth()
-const router = useRouter()
-const config = useRuntimeConfig()
+// ProfileForm a UserProfile preferred_language típusát örökli, hogy ne duplikáljuk a literál uniót
+interface ProfileForm {
+  name: string
+  phone: string
+  birth_date: string
+  address: string
+  insurance_number: string
+  emergency_contact_name: string
+  emergency_contact_phone: string
+  medical_notes: string
+  preferred_language: UserProfile['preferred_language']
+  newsletter_subscription: boolean
+}
 
-const form = ref({
+const { user, fetchUser, updateProfile, uploadAvatar, logout, isAdminOrStaff } = useAuth()
+const config = useRuntimeConfig()
+const avatarInput = ref<HTMLInputElement | null>(null)
+
+const form = ref<ProfileForm>({
   name: '',
   phone: '',
   birth_date: '',

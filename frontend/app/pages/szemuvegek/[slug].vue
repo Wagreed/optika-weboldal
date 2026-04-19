@@ -155,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Product } from '~/composables/useProducts'
+import type { Product, ProductImage } from '~/composables/useProducts'
 
 const route = useRoute()
 const { fetchProduct, formatPrice, genderLabel } = useProducts()
@@ -163,7 +163,7 @@ const { fetchProduct, formatPrice, genderLabel } = useProducts()
 const product = ref<Product | null>(null)
 const loading = ref(true)
 const error = ref(false)
-const activeImage = ref<{ id: number; url: string; alt_text?: string } | null>(null)
+const activeImage = ref<ProductImage | null>(null)
 
 useHead(computed(() => ({
   title: product.value ? `${product.value.name} - Optika` : 'Termék - Optika',

@@ -1,4 +1,4 @@
-interface ProductImage {
+export interface ProductImage {
   id: number
   image_path: string
   alt_text?: string
@@ -7,7 +7,13 @@ interface ProductImage {
   url: string
 }
 
-interface ProductCategory {
+export interface ProductCategory {
+  id: number
+  name: string
+  slug: string
+}
+
+export interface Category {
   id: number
   name: string
   slug: string
@@ -51,6 +57,27 @@ export interface ProductFilters {
   page?: number
 }
 
+// Lapozható termék lista API válasz struktúrája (Laravel paginator)
+interface ProductsResponse {
+  data: Product[]
+  total: number
+  last_page: number
+  current_page: number
+  per_page: number
+}
+
+interface FeaturedProductsResponse {
+  products: Product[]
+}
+
+interface SingleProductResponse {
+  product: Product
+}
+
+interface CategoriesResponse {
+  categories: Category[]
+}
+
 export const useProducts = () => {
   const { api } = useApi()
   const config = useRuntimeConfig()
@@ -59,26 +86,26 @@ export const useProducts = () => {
     (config.public.apiUrl as string).replace('/api', '') + '/storage/'
   )
 
-  const fetchProducts = async (filters: ProductFilters = {}) => {
+  const fetchProducts = async (filters: ProductFilters = {}): Promise<ProductsResponse> => {
     const query: Record<string, string | number> = {}
     Object.entries(filters).forEach(([key, val]) => {
       if (val !== undefined && val !== '' && val !== null) {
         query[key] = val as string | number
       }
     })
-    return await api('/products', { query })
+    return await api<ProductsResponse>('/products', { query })
   }
 
-  const fetchFeatured = async () => {
-    return await api('/products/featured')
+  const fetchFeatured = async (): Promise<FeaturedProductsResponse> => {
+    return await api<FeaturedProductsResponse>('/products/featured')
   }
 
-  const fetchProduct = async (slug: string) => {
-    return await api(`/products/${slug}`)
+  const fetchProduct = async (slug: string): Promise<SingleProductResponse> => {
+    return await api<SingleProductResponse>(`/products/${slug}`)
   }
 
-  const fetchCategories = async () => {
-    return await api('/categories')
+  const fetchCategories = async (): Promise<CategoriesResponse> => {
+    return await api<CategoriesResponse>('/categories')
   }
 
   const formatPrice = (price: string | number) =>

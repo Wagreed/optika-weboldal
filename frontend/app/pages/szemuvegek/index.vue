@@ -289,14 +289,14 @@
 </template>
 
 <script setup lang="ts">
-import type { Product, ProductFilters } from '~/composables/useProducts'
+import type { Product, ProductFilters, Category } from '~/composables/useProducts'
 
 useHead({ title: 'Szemüvegek - Optika' })
 
 const { fetchProducts, fetchCategories, formatPrice, genderLabel } = useProducts()
 
 const products = ref<Product[]>([])
-const categories = ref<{ id: number; name: string; slug: string }[]>([])
+const categories = ref<Category[]>([])
 const loading = ref(false)
 const total = ref(0)
 const currentPage = ref(1)
@@ -340,8 +340,8 @@ const loadProducts = async (append = false) => {
     }
     total.value = data.total
     lastPage.value = data.last_page
-  } catch (e) {
-    console.error(e)
+  } catch (error) {
+    console.error(error)
   } finally {
     loading.value = false
   }

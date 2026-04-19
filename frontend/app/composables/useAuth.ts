@@ -1,4 +1,4 @@
-interface User {
+export interface User {
   id: number
   name: string
   email: string
@@ -9,7 +9,7 @@ interface User {
   profile?: UserProfile
 }
 
-interface UserProfile {
+export interface UserProfile {
   id: number
   user_id: number
   avatar?: string
@@ -36,6 +36,36 @@ interface LoginData {
   password: string
 }
 
+// Az ofetch/`$fetch` hibák .data mezőbe rakják a Laravel által visszaadott JSON-t
+interface ApiError {
+  data?: {
+    message?: string
+    errors?: Record<string, string[]>
+  }
+}
+
+interface AuthResponse {
+  user: User
+  roles: string[]
+  token: string
+  message: string
+}
+
+interface UserResponse {
+  user: User
+  roles: string[]
+}
+
+interface ProfileUpdateResponse {
+  user: User
+  message: string
+}
+
+interface AvatarUploadResponse {
+  avatar_url: string
+  message: string
+}
+
 export const useAuth = () => {
   const { api } = useApi()
   const config = useRuntimeConfig()
@@ -49,28 +79,29 @@ export const useAuth = () => {
 
   const register = async (data: RegisterData) => {
     try {
-      const response = await api('/register', {
+      const response = await api<AuthResponse>('/register', {
         method: 'POST',
         body: data,
       })
 
       token.value = response.token
       user.value = response.user
-      userRoles.value = response.roles || []
+      userRoles.value = response.roles
 
       // Admin/staff felhasználókat a Filament panelre irányítjuk session-alapú auth-al
-      if (response.roles && response.roles.some((role: string) => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
+      if (response.roles.some(role => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
         const backendUrl = config.public.apiUrl.replace('/api', '')
         window.location.href = `${backendUrl}/auth/admin-session/${response.token}`
         return { success: true, message: response.message, redirectToAdmin: true }
       }
 
       return { success: true, message: response.message, redirectToAdmin: false }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError
       return {
         success: false,
-        message: error.data?.message || 'Regisztráció sikertelen',
-        errors: error.data?.errors || {},
+        message: apiError.data?.message ?? 'Regisztráció sikertelen',
+        errors: apiError.data?.errors ?? {},
         redirectToAdmin: false,
       }
     }
@@ -78,28 +109,29 @@ export const useAuth = () => {
 
   const login = async (data: LoginData) => {
     try {
-      const response = await api('/login', {
+      const response = await api<AuthResponse>('/login', {
         method: 'POST',
         body: data,
       })
 
       token.value = response.token
       user.value = response.user
-      userRoles.value = response.roles || []
+      userRoles.value = response.roles
 
       // Admin/staff felhasználókat a Filament panelre irányítjuk session-alapú auth-al
-      if (response.roles && response.roles.some((role: string) => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
+      if (response.roles.some(role => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
         const backendUrl = config.public.apiUrl.replace('/api', '')
         window.location.href = `${backendUrl}/auth/admin-session/${response.token}`
         return { success: true, message: response.message, redirectToAdmin: true }
       }
 
       return { success: true, message: response.message, redirectToAdmin: false }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError
       return {
         success: false,
-        message: error.data?.message || 'Bejelentkezés sikertelen',
-        errors: error.data?.errors || {},
+        message: apiError.data?.message ?? 'Bejelentkezés sikertelen',
+        errors: apiError.data?.errors ?? {},
         redirectToAdmin: false,
       }
     }
@@ -127,9 +159,9 @@ export const useAuth = () => {
 
     try {
       // A timestamp param megakadályozza, hogy a böngésző a régi választ cache-elje
-      const response = await api(`/user?_=${Date.now()}`)
+      const response = await api<UserResponse>(`/user?_=${Date.now()}`)
       user.value = response.user
-      userRoles.value = response.roles || []
+      userRoles.value = response.roles
     } catch (error) {
       console.error('Fetch user error:', error)
       token.value = null
@@ -140,7 +172,7 @@ export const useAuth = () => {
 
   const updateProfile = async (data: Partial<User & UserProfile>) => {
     try {
-      const response = await api('/profile', {
+      const response = await api<ProfileUpdateResponse>('/profile', {
         method: 'PUT',
         body: data,
       })
@@ -151,11 +183,12 @@ export const useAuth = () => {
       await fetchUser()
 
       return { success: true, message: response.message }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError
       return {
         success: false,
-        message: error.data?.message || 'Profil frissítés sikertelen',
-        errors: error.data?.errors || {},
+        message: apiError.data?.message ?? 'Profil frissítés sikertelen',
+        errors: apiError.data?.errors ?? {},
       }
     }
   }
@@ -165,7 +198,7 @@ export const useAuth = () => {
       const formData = new FormData()
       formData.append('avatar', file)
 
-      const response = await $fetch('/profile/avatar', {
+      const response = await $fetch<AvatarUploadResponse>('/profile/avatar', {
         baseURL: useApi().apiUrl,
         method: 'POST',
         body: formData,
@@ -177,11 +210,12 @@ export const useAuth = () => {
       await fetchUser()
 
       return { success: true, message: response.message, avatar_url: response.avatar_url }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const apiError = error as ApiError
       return {
         success: false,
-        message: error.data?.message || 'Profilkép feltöltés sikertelen',
-        errors: error.data?.errors || {},
+        message: apiError.data?.message ?? 'Profilkép feltöltés sikertelen',
+        errors: apiError.data?.errors ?? {},
       }
     }
   }
