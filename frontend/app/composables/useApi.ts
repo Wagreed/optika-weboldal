@@ -19,7 +19,6 @@ export const useApi = () => {
       }
     },
     onResponseError({ response }) {
-      // Handle 401 errors (unauthorized)
       if (response.status === 401) {
         token.value = null
         navigateTo('/login')

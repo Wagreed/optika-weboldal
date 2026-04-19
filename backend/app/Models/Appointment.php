@@ -33,33 +33,21 @@ class Appointment extends Model
         ];
     }
 
-    /**
-     * Get the customer.
-     */
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    /**
-     * Get the staff member.
-     */
     public function staff()
     {
         return $this->belongsTo(User::class, 'staff_id');
     }
 
-    /**
-     * Get the appointment type.
-     */
     public function appointmentType()
     {
         return $this->belongsTo(AppointmentType::class);
     }
 
-    /**
-     * Get the eye examination.
-     */
     public function eyeExamination()
     {
         return $this->hasOne(EyeExamination::class);

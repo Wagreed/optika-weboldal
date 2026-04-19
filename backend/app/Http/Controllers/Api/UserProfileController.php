@@ -9,9 +9,6 @@ use Illuminate\Support\Str;
 
 class UserProfileController extends Controller
 {
-    /**
-     * Get user profile
-     */
     public function show(Request $request)
     {
         $user = $request->user()->load('profile');
@@ -22,9 +19,6 @@ class UserProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update user profile
-     */
     public function update(Request $request)
     {
         $validated = $request->validate([
@@ -42,7 +36,6 @@ class UserProfileController extends Controller
 
         $user = $request->user();
 
-        // Update user fields
         $userFields = ['name', 'phone', 'birth_date', 'address'];
         foreach ($userFields as $field) {
             if (isset($validated[$field])) {
@@ -51,7 +44,6 @@ class UserProfileController extends Controller
         }
         $user->save();
 
-        // Update profile fields
         $profileFields = [
             'insurance_number',
             'emergency_contact_name',
@@ -84,28 +76,22 @@ class UserProfileController extends Controller
         ]);
     }
 
-    /**
-     * Upload user avatar
-     */
     public function uploadAvatar(Request $request)
     {
         $request->validate([
-            'avatar' => 'required|image|max:2048', // Max 2MB
+            'avatar' => 'required|image|max:2048',
         ]);
 
         $user = $request->user();
 
-        // Delete old avatar if exists
         if ($user->profile && $user->profile->avatar) {
             Storage::disk('public')->delete($user->profile->avatar);
         }
 
-        // Store new avatar
         $file = $request->file('avatar');
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('avatars', $filename, 'public');
 
-        // Update profile
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
             ['avatar' => $path]

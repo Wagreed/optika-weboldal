@@ -319,16 +319,13 @@
 </template>
 
 <script setup>
-// Mobil menü állapot
 const mobileMenuOpen = ref(false)
 const userMenuOpen = ref(false)
 
-// Auth state
 const { user, isLoggedIn, isAdminOrStaff, logout } = useAuth()
 const config = useRuntimeConfig()
 const adminPanelUrl = config.public.adminUrl
 
-// Logout handler
 const handleLogout = async () => {
   mobileMenuOpen.value = false
   userMenuOpen.value = false

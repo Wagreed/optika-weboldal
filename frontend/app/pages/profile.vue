@@ -238,16 +238,14 @@ const loading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 
-// Date formatting helpers
+// A backend ISO formátumban adja vissza a dátumot (YYYY-MM-DD), de a felhasználónak DD/MM/YYYY-t mutatunk
 const formatDateForDisplay = (dateString: string) => {
   if (!dateString) return ''
 
-  // Handle ISO datetime format (YYYY-MM-DDTHH:mm:ss.sssZ)
   if (dateString.includes('T')) {
     dateString = dateString.split('T')[0]
   }
 
-  // Now split the YYYY-MM-DD format
   const parts = dateString.split('-')
   if (parts.length === 3) {
     const [year, month, day] = parts
@@ -259,9 +257,7 @@ const formatDateForDisplay = (dateString: string) => {
 
 const formatDateForBackend = (dateString: string) => {
   if (!dateString) return ''
-  // If already in YYYY-MM-DD format, return as is
   if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) return dateString
-  // If in DD/MM/YYYY format, convert to YYYY-MM-DD
   const parts = dateString.split('/')
   if (parts.length === 3) {
     return `${parts[2]}-${parts[1]}-${parts[0]}`
@@ -269,7 +265,6 @@ const formatDateForBackend = (dateString: string) => {
   return dateString
 }
 
-// Auto-format date input as user types
 const handleDateInput = (event: Event) => {
   const input = event.target as HTMLInputElement
   let value = input.value.replace(/\D/g, '') // Remove non-digits
@@ -284,7 +279,6 @@ const handleDateInput = (event: Event) => {
   form.value.birth_date = value
 }
 
-// Helper function to load form data from user
 const loadFormData = () => {
   if (user.value) {
     form.value = {
@@ -302,16 +296,14 @@ const loadFormData = () => {
   }
 }
 
-// Watch for user changes and reload form
 watch(user, () => {
   loadFormData()
 }, { deep: true })
 
-// Load user data on mount
 onMounted(async () => {
   await fetchUser()
 
-  // Redirect admins/staff to admin panel
+  // Admin/staff felhasználóknak nincs frontenden profil oldala, ők a Filament panelt használják
   if (isAdminOrStaff.value) {
     const token = useCookie('auth_token')
     const backendUrl = config.public.apiUrl.replace('/api', '')
@@ -327,7 +319,7 @@ const handleUpdate = async () => {
   successMessage.value = ''
   errorMessage.value = ''
 
-  // Convert date format for backend (DD/MM/YYYY -> YYYY-MM-DD)
+  // A backend YYYY-MM-DD formátumot vár, a form DD/MM/YYYY-ban tárolja
   const dataToSend = {
     ...form.value,
     birth_date: formatDateForBackend(form.value.birth_date)
@@ -343,7 +335,6 @@ const handleUpdate = async () => {
 
   loading.value = false
 
-  // Clear messages after 5 seconds
   setTimeout(() => {
     successMessage.value = ''
     errorMessage.value = ''
@@ -367,7 +358,6 @@ const handleAvatarUpload = async (event: Event) => {
     errorMessage.value = result.message || 'Profilkép feltöltés sikertelen'
   }
 
-  // Clear messages after 5 seconds
   setTimeout(() => {
     successMessage.value = ''
     errorMessage.value = ''

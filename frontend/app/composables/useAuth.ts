@@ -58,9 +58,8 @@ export const useAuth = () => {
       user.value = response.user
       userRoles.value = response.roles || []
 
-      // Redirect to admin panel if user has admin or staff role
+      // Admin/staff felhasználókat a Filament panelre irányítjuk session-alapú auth-al
       if (response.roles && response.roles.some((role: string) => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
-        // Redirect to special route that creates session and redirects to admin
         const backendUrl = config.public.apiUrl.replace('/api', '')
         window.location.href = `${backendUrl}/auth/admin-session/${response.token}`
         return { success: true, message: response.message, redirectToAdmin: true }
@@ -88,9 +87,8 @@ export const useAuth = () => {
       user.value = response.user
       userRoles.value = response.roles || []
 
-      // Redirect to admin panel if user has admin or staff role
+      // Admin/staff felhasználókat a Filament panelre irányítjuk session-alapú auth-al
       if (response.roles && response.roles.some((role: string) => ['admin', 'staff', 'super_admin'].includes(role.toLowerCase()))) {
-        // Redirect to special route that creates session and redirects to admin
         const backendUrl = config.public.apiUrl.replace('/api', '')
         window.location.href = `${backendUrl}/auth/admin-session/${response.token}`
         return { success: true, message: response.message, redirectToAdmin: true }
@@ -128,7 +126,7 @@ export const useAuth = () => {
     }
 
     try {
-      // Hozzáadunk egy timestamp paramétert, hogy elkerüljük a cache-elést
+      // A timestamp param megakadályozza, hogy a böngésző a régi választ cache-elje
       const response = await api(`/user?_=${Date.now()}`)
       user.value = response.user
       userRoles.value = response.roles || []
@@ -149,8 +147,7 @@ export const useAuth = () => {
 
       user.value = response.user
 
-      // Frissítjük a user adatokat a fetchUser() hívásával is,
-      // hogy biztosítsuk a cache-mentes friss adatokat
+      // A fetchUser() meghívása biztosítja, hogy a profile reláció is frissüljön
       await fetchUser()
 
       return { success: true, message: response.message }
@@ -177,7 +174,6 @@ export const useAuth = () => {
         },
       })
 
-      // Fetch updated user data
       await fetchUser()
 
       return { success: true, message: response.message, avatar_url: response.avatar_url }
