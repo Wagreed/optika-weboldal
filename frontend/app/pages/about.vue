@@ -64,13 +64,17 @@
 
           <!-- Képes kártya -->
           <div class="relative">
-            <div class="rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm aspect-[4/3]">
+            <div class="rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm aspect-[4/3] flex items-center justify-center">
               <img
+                v-if="!teamImageError"
                 src="/img/about-team.jpg"
                 alt="Csapatunk"
                 class="w-full h-full object-cover"
-                @error="($event.target as HTMLImageElement).parentElement!.classList.add('flex','items-center','justify-center')"
+                @error="teamImageError = true"
               >
+              <svg v-else class="w-16 h-16 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
             </div>
             <!-- Lebegő badge -->
             <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg border border-slate-100 px-5 py-3.5 flex items-center gap-3">
@@ -181,6 +185,8 @@
 
 <script setup lang="ts">
 useHead({ title: 'Rólunk - Optika' })
+
+const teamImageError = ref(false)
 
 const stats = [
   { value: '20+', label: 'Év tapasztalat' },

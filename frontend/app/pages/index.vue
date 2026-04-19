@@ -104,13 +104,26 @@
             </svg>
           </NuxtLink>
         </div>
-        <div class="overflow-x-auto scrollbar-hide -mx-4 px-4">
-          <div class="flex gap-4 pb-2 featured-scroll">
+        <div
+          ref="carouselRef"
+          class="overflow-x-hidden -mx-4 px-4 select-none"
+          :class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
+          @mouseenter="isHovered = true"
+          @mouseleave="isHovered = false; onDragEnd()"
+          @mousedown="onDragStart"
+          @mousemove="onDragMove"
+          @mouseup="onDragEnd"
+          @touchstart.passive="onTouchStart"
+          @touchmove.passive="onTouchMove"
+          @touchend="onDragEnd"
+        >
+          <div class="flex gap-4 pb-2">
             <NuxtLink
               v-for="(product, i) in [...featuredProducts, ...featuredProducts]"
-              :key="`f-${i}-${product.id}`"
+              :key="`${i}-${product.id}`"
               :to="`/szemuvegek/${product.slug}`"
               class="flex-shrink-0 w-52 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:-translate-y-1 hover:shadow-md transition-all duration-300 no-underline group"
+              :draggable="false"
             >
               <div class="h-40 bg-slate-50 flex items-center justify-center overflow-hidden">
                 <img
@@ -215,6 +228,61 @@ onMounted(async () => {
     // Ha nincs termék, nem gond, a sáv nem jelenik meg
   }
 })
+
+// --- Carousel: auto-scroll + drag-to-scroll ---
+const carouselRef = ref<HTMLDivElement | null>(null)
+const isDragging = ref(false)
+const isHovered = ref(false)
+const dragStartX = ref(0)
+const dragScrollLeft = ref(0)
+let rafId: number | null = null
+
+// rAF loop: lassan tolja a scrollLeft-et, egér hoverre/dragre megáll
+const startAutoScroll = () => {
+  const tick = () => {
+    const el = carouselRef.value
+    if (el && !isDragging.value && !isHovered.value) {
+      el.scrollLeft += 0.6
+      // Seamless loop: amikor elért a duplikált lista feléhez, visszaugrik
+      if (el.scrollLeft >= el.scrollWidth / 2) {
+        el.scrollLeft -= el.scrollWidth / 2
+      }
+    }
+    rafId = requestAnimationFrame(tick)
+  }
+  rafId = requestAnimationFrame(tick)
+}
+
+onMounted(() => startAutoScroll())
+onUnmounted(() => { if (rafId) cancelAnimationFrame(rafId) })
+
+const onDragStart = (e: MouseEvent) => {
+  if (!carouselRef.value) return
+  isDragging.value = true
+  dragStartX.value = e.pageX - carouselRef.value.offsetLeft
+  dragScrollLeft.value = carouselRef.value.scrollLeft
+}
+
+const onDragMove = (e: MouseEvent) => {
+  if (!isDragging.value || !carouselRef.value) return
+  const x = e.pageX - carouselRef.value.offsetLeft
+  carouselRef.value.scrollLeft = dragScrollLeft.value - (x - dragStartX.value)
+}
+
+const onDragEnd = () => { isDragging.value = false }
+
+const onTouchStart = (e: TouchEvent) => {
+  if (!carouselRef.value) return
+  isDragging.value = true
+  dragStartX.value = e.touches[0].pageX - carouselRef.value.offsetLeft
+  dragScrollLeft.value = carouselRef.value.scrollLeft
+}
+
+const onTouchMove = (e: TouchEvent) => {
+  if (!isDragging.value || !carouselRef.value) return
+  const x = e.touches[0].pageX - carouselRef.value.offsetLeft
+  carouselRef.value.scrollLeft = dragScrollLeft.value - (x - dragStartX.value)
+}
 </script>
 
 <style scoped>
@@ -224,17 +292,5 @@ onMounted(async () => {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
-}
-
-@keyframes featured-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.featured-scroll {
-  width: max-content;
-  animation: featured-scroll 40s linear infinite;
-}
-.featured-scroll:hover {
-  animation-play-state: paused;
 }
 </style>
