@@ -8,6 +8,8 @@ class Appointment extends Model
 {
     protected $fillable = [
         'customer_id',
+        'guest_name',
+        'guest_email',
         'staff_id',
         'appointment_type_id',
         'appointment_date',
@@ -27,9 +29,9 @@ class Appointment extends Model
     {
         return [
             'appointment_date' => 'date',
-            'reminder_sent' => 'boolean',
-            'price' => 'decimal:2',
-            'cancelled_at' => 'datetime',
+            'reminder_sent'    => 'boolean',
+            'price'            => 'decimal:2',
+            'cancelled_at'     => 'datetime',
         ];
     }
 
@@ -51,5 +53,17 @@ class Appointment extends Model
     public function eyeExamination()
     {
         return $this->hasOne(EyeExamination::class);
+    }
+
+    // Az email a regisztrált ügyféltől vagy a vendég adatából
+    public function getContactEmail(): ?string
+    {
+        return $this->customer?->email ?? $this->guest_email;
+    }
+
+    // A név a regisztrált ügyféltől vagy a vendég adatából
+    public function getContactName(): string
+    {
+        return $this->customer?->name ?? $this->guest_name ?? 'Ismeretlen';
     }
 }

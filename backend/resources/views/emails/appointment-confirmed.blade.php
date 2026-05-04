@@ -40,7 +40,7 @@
                       </tr>
                       <tr>
                         <td style="color:#6b7280;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding-bottom:8px;">Dátum</td>
-                        <td style="color:#1e3a8a;font-size:15px;font-weight:700;text-align:right;padding-bottom:8px;">{{ $appointment->appointment_date->format('Y. F j.') }}</td>
+                        <td style="color:#1e3a8a;font-size:15px;font-weight:700;text-align:right;padding-bottom:8px;">{{ $appointment->appointment_date->locale('hu')->isoFormat('YYYY. MMMM D.') }}</td>
                       </tr>
                       <tr>
                         <td style="color:#6b7280;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Időpont</td>

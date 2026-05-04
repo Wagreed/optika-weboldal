@@ -40,7 +40,7 @@
                       </tr>
                       <tr>
                         <td style="color:#6b7280;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;">Kért dátum</td>
-                        <td style="color:#7f1d1d;font-size:15px;font-weight:700;text-align:right;">{{ $appointment->appointment_date->format('Y. F j.') }}</td>
+                        <td style="color:#7f1d1d;font-size:15px;font-weight:700;text-align:right;">{{ $appointment->appointment_date->locale('hu')->isoFormat('YYYY. MMMM D.') }}</td>
                       </tr>
                     </table>
                   </td>

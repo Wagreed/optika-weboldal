@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
@@ -16,6 +17,13 @@ Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/categories', [CategoryController::class, 'index']);
 
+// Appointment types (public – a foglalási form tölti be)
+Route::get('/appointment-types', [AppointmentController::class, 'types']);
+
+// Időpont foglalás: vendégek és bejelentkezett felhasználók is küldhetnek kérést
+// A controller auth('sanctum')->user() hívással különbözteti meg őket
+Route::post('/appointments', [AppointmentController::class, 'store']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -25,4 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserProfileController::class, 'show']);
     Route::put('/profile', [UserProfileController::class, 'update']);
     Route::post('/profile/avatar', [UserProfileController::class, 'uploadAvatar']);
+
+    // Bejelentkezett felhasználó saját időpontjai
+    Route::get('/appointments/my', [AppointmentController::class, 'myAppointments']);
 });
