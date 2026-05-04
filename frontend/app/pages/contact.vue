@@ -188,6 +188,10 @@
                   <!-- Jelmagyarázat -->
                   <div class="px-4 pb-3 flex flex-wrap gap-x-4 gap-y-1.5">
                     <div class="flex items-center gap-1.5">
+                      <span class="w-3 h-3 rounded bg-slate-100 border border-slate-200 inline-block"></span>
+                      <span class="text-xs text-slate-400">Hétvége / zárva</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
                       <span class="w-3 h-3 rounded bg-red-100 border border-red-200 inline-block"></span>
                       <span class="text-xs text-slate-400">Ünnepnap / zárva</span>
                     </div>
@@ -207,7 +211,8 @@
               <!-- Step 3: Time slot -->
               <div class="mb-7">
                 <label class="block text-sm font-semibold text-slate-700 mb-3">3. Válasszon időpontot</label>
-                <div class="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                <p v-if="!form.appointment_date" class="text-sm text-slate-400 italic">Először válasszon dátumot a naptárból.</p>
+                <div v-else class="grid grid-cols-4 sm:grid-cols-6 gap-2">
                   <button
                     v-for="slot in timeSlots"
                     :key="slot"
@@ -334,7 +339,7 @@ interface CalendarDay {
   dateStr: string
   isPast: boolean
   isToday: boolean
-  isSunday: boolean
+  isWeekend: boolean
   isBlocked: boolean
   isFullyBooked: boolean
   isPartiallyBooked: boolean
@@ -377,7 +382,20 @@ const form = ref<BookingForm>({
   customer_notes: '',
 })
 
-const timeSlots = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00']
+// Nap-specifikus időpontok (1=H, 2=K, 3=Sz, 4=Cs, 5=P; 6=Szo és 0=V zárva)
+const SLOTS_BY_DOW: Record<number, string[]> = {
+  1: ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'],
+  2: ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'],
+  3: ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'],
+  4: ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00'],
+  5: ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00'],
+}
+
+const timeSlots = computed<string[]>(() => {
+  if (!form.value.appointment_date) return []
+  const dow = new Date(form.value.appointment_date + 'T00:00:00').getDay()
+  return SLOTS_BY_DOW[dow] ?? []
+})
 
 const monthNames = ['Január','Február','Március','Április','Május','Június','Július','Augusztus','Szeptember','Október','November','December']
 
@@ -414,7 +432,7 @@ function dayClass(day: CalendarDay): Record<string, boolean> {
     'bg-red-50 text-red-300 cursor-not-allowed': !isSelected && day.isBlocked,
     'bg-slate-200 text-slate-400 cursor-not-allowed': !isSelected && day.isFullyBooked,
     'bg-blue-50 text-blue-700 ring-1 ring-blue-200': !isSelected && day.isToday && !day.isDisabled,
-    'text-slate-300 cursor-not-allowed': !isSelected && (day.isPast || day.isSunday) && !day.isBlocked && !day.isFullyBooked,
+    'text-slate-300 cursor-not-allowed': !isSelected && (day.isPast || day.isWeekend) && !day.isBlocked && !day.isFullyBooked,
     'text-slate-700 hover:bg-blue-50 hover:text-blue-700': !isSelected && !day.isDisabled && !day.isToday,
   }
 }
@@ -433,8 +451,9 @@ const calendarDays = computed(() => {
     const date = new Date(year, month, d)
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
 
+    const dow            = date.getDay()
     const isPast         = date < todayDate
-    const isSunday       = date.getDay() === 0
+    const isWeekend      = dow === 0 || dow === 6
     const isBlocked      = dateStr in blockedDates.value
     const isFullyBooked  = fullyBookedDates.value.includes(dateStr)
     const slots          = bookedSlots.value[dateStr] ?? []
@@ -445,11 +464,11 @@ const calendarDays = computed(() => {
       dateStr,
       isPast,
       isToday: date.getTime() === todayDate.getTime(),
-      isSunday,
+      isWeekend,
       isBlocked,
       isFullyBooked,
       isPartiallyBooked,
-      isDisabled: isPast || isSunday || isBlocked || isFullyBooked,
+      isDisabled: isPast || isWeekend || isBlocked || isFullyBooked,
       blockedReason: isBlocked ? (blockedDates.value[dateStr] ?? null) : null,
     })
   }
@@ -460,22 +479,22 @@ const calendarDays = computed(() => {
 const contactInfo = [
   {
     label: 'Cím',
-    value: 'Főutca 12., Város',
+    value: 'Decemberi Forradalom utca 3 szám, Csíkszereda',
     icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z',
   },
   {
     label: 'Telefonszám',
-    value: '+40 xxx xxx xxx',
+    value: '+40 755 088 373',
     icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z',
   },
   {
     label: 'Email',
-    value: 'info@optika.ro',
+    value: 'office@biooptica.ro',
     icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
   },
   {
     label: 'Nyitvatartás',
-    value: 'H–P: 09:00–18:00<br>Sz: 09:00–13:00',
+    value: 'Hétfő–Szerda: 10:00–18:00<br>Csütörtök: 09:00–17:00<br>Péntek: 09:00–16:00<br>Szombat–Vasárnap: Zárva',
     icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
   },
 ]

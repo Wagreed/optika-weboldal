@@ -12,8 +12,15 @@ use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
-    // Az összes lehetséges időpont slot – a frontend ugyanezt használja
-    private const TIME_SLOTS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
+    // Nap-specifikus slotok (Carbon dayOfWeek: 0=V, 1=H, 2=K, 3=Sz, 4=Cs, 5=P, 6=Szo)
+    private const SLOTS_BY_DOW = [
+        1 => ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'], // Hétfő
+        2 => ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'], // Kedd
+        3 => ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'], // Szerda
+        4 => ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00'], // Csütörtök
+        5 => ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00'],           // Péntek
+        // 6 (Szombat) és 0 (Vasárnap) hiányzik = zárva
+    ];
 
     public function types()
     {
@@ -68,10 +75,12 @@ class AppointmentController extends Controller
             $bookedSlots[$date][] = $slot;
         }
 
-        // Teljesen foglalt napok: ahol minden slot le van foglalva
+        // Teljesen foglalt napok: ahol az adott napra érvényes összes slot le van foglalva
         $fullyBookedDates = [];
         foreach ($bookedSlots as $date => $slots) {
-            if (count(array_unique($slots)) >= count(self::TIME_SLOTS)) {
+            $dow = Carbon::parse($date)->dayOfWeek;
+            $daySlots = self::SLOTS_BY_DOW[$dow] ?? [];
+            if (!empty($daySlots) && count(array_unique($slots)) >= count($daySlots)) {
                 $fullyBookedDates[] = $date;
             }
         }
@@ -95,6 +104,17 @@ class AppointmentController extends Controller
             'guest_email'         => $user ? 'nullable' : 'required|email|max:255',
             'customer_notes'      => 'nullable|string|max:1000',
         ]);
+
+        $appointmentDay = Carbon::parse($validated['appointment_date']);
+        $validSlots = self::SLOTS_BY_DOW[$appointmentDay->dayOfWeek] ?? [];
+
+        if (empty($validSlots)) {
+            return response()->json(['message' => 'Ezen a napon az üzlet zárva van.'], 422);
+        }
+
+        if (!in_array(substr($validated['start_time'], 0, 5), $validSlots)) {
+            return response()->json(['message' => 'A kiválasztott időpont nem érvényes erre a napra.'], 422);
+        }
 
         $appointment = Appointment::create([
             'customer_id'         => $user?->id,
