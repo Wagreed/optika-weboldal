@@ -169,8 +169,8 @@ onUnmounted(() => { if (rafId) cancelAnimationFrame(rafId) })
 const onDragStart = (e: MouseEvent) => { if (!carouselRef.value) return; isDragging.value = true; dragStartX.value = e.pageX - carouselRef.value.offsetLeft; dragScrollLeft.value = carouselRef.value.scrollLeft }
 const onDragMove = (e: MouseEvent) => { if (!isDragging.value || !carouselRef.value) return; carouselRef.value.scrollLeft = dragScrollLeft.value - (e.pageX - carouselRef.value.offsetLeft - dragStartX.value) }
 const onDragEnd = () => { isDragging.value = false }
-const onTouchStart = (e: TouchEvent) => { if (!carouselRef.value) return; isDragging.value = true; dragStartX.value = e.touches[0].pageX - carouselRef.value.offsetLeft; dragScrollLeft.value = carouselRef.value.scrollLeft }
-const onTouchMove = (e: TouchEvent) => { if (!isDragging.value || !carouselRef.value) return; carouselRef.value.scrollLeft = dragScrollLeft.value - (e.touches[0].pageX - carouselRef.value.offsetLeft - dragStartX.value) }
+const onTouchStart = (e: TouchEvent) => { if (!carouselRef.value || !e.touches[0]) return; isDragging.value = true; dragStartX.value = e.touches[0].pageX - carouselRef.value.offsetLeft; dragScrollLeft.value = carouselRef.value.scrollLeft }
+const onTouchMove = (e: TouchEvent) => { if (!isDragging.value || !carouselRef.value || !e.touches[0]) return; carouselRef.value.scrollLeft = dragScrollLeft.value - (e.touches[0].pageX - carouselRef.value.offsetLeft - dragStartX.value) }
 </script>
 <style scoped>
 .scroll-dot { animation: sb 1.8s ease-in-out infinite; }

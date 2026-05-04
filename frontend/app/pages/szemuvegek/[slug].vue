@@ -384,7 +384,8 @@ const recommendedFor = computed(() => {
     unisex: { icon: '🤝', title: 'Mindkét nemnek', desc: 'Univerzális, letisztult dizájn, amely férfiaknak és nőknek egyaránt jól áll.' },
     kids: { icon: '🎒', title: 'Gyerekeknek', desc: 'Gyermekekre méretezett, tartós kialakítás, amely biztonságos és kényelmes az iskolai mindennapokban is.' },
   }
-  if (genderMap[p.gender]) recs.push(genderMap[p.gender])
+  const genderRec = genderMap[p.gender]
+  if (genderRec) recs.push(genderRec)
 
   // Korosztály alapján
   if (p.age_group === 'senior') {

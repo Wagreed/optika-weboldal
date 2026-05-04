@@ -12,10 +12,9 @@ export const useApi = () => {
     },
     onRequest({ options }) {
       if (token.value) {
-        options.headers = {
-          ...options.headers,
-          Authorization: `Bearer ${token.value}`,
-        }
+        const h = new Headers(options.headers as HeadersInit | undefined)
+        h.set('Authorization', `Bearer ${token.value}`)
+        options.headers = h
       }
     },
     onResponseError({ response }) {

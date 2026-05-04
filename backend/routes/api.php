@@ -20,6 +20,9 @@ Route::get('/categories', [CategoryController::class, 'index']);
 // Appointment types (public – a foglalási form tölti be)
 Route::get('/appointment-types', [AppointmentController::class, 'types']);
 
+// Naptár elérhetőség: blokkolt/foglalt napok és slotok adott hónapra
+Route::get('/appointments/availability', [AppointmentController::class, 'availability']);
+
 // Időpont foglalás: vendégek és bejelentkezett felhasználók is küldhetnek kérést
 // A controller auth('sanctum')->user() hívással különbözteti meg őket
 Route::post('/appointments', [AppointmentController::class, 'store']);

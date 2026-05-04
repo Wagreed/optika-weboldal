@@ -148,54 +148,56 @@
                 <div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
                   <!-- Calendar header -->
                   <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
-                    <button
-                      type="button"
-                      @click="prevMonth"
-                      class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                      </svg>
+                    <button type="button" @click="prevMonth" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
-                    <span class="text-sm font-semibold text-slate-800">{{ calendarTitle }}</span>
-                    <button
-                      type="button"
-                      @click="nextMonth"
-                      class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                      </svg>
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-semibold text-slate-800">{{ calendarTitle }}</span>
+                      <div v-if="availabilityLoading" class="w-3 h-3 border border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <button type="button" @click="nextMonth" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-200 text-slate-600 transition">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                   </div>
                   <!-- Day names -->
                   <div class="grid grid-cols-7 border-b border-slate-100">
-                    <div
-                      v-for="d in ['H', 'K', 'Sz', 'Cs', 'P', 'Sz', 'V']"
-                      :key="d"
-                      class="py-2 text-center text-xs font-semibold text-slate-400"
-                    >
-                      {{ d }}
-                    </div>
+                    <div v-for="d in ['H', 'K', 'Sz', 'Cs', 'P', 'Sz', 'V']" :key="d" class="py-2 text-center text-xs font-semibold text-slate-400">{{ d }}</div>
                   </div>
                   <!-- Days grid -->
                   <div class="grid grid-cols-7 p-2 gap-1">
                     <div v-for="(day, i) in calendarDays" :key="i">
+                      <div v-if="!day" class="aspect-square"></div>
                       <button
-                        v-if="day"
+                        v-else
                         type="button"
-                        :disabled="day.isPast || day.isSunday"
-                        @click="selectDate(day.dateStr)"
-                        class="w-full aspect-square flex items-center justify-center text-sm rounded-lg transition-all font-medium"
-                        :class="{
-                          'bg-blue-600 text-white shadow-sm': form.appointment_date === day.dateStr,
-                          'bg-blue-50 text-blue-700 font-bold ring-1 ring-blue-200': day.isToday && form.appointment_date !== day.dateStr,
-                          'text-slate-300 cursor-not-allowed': day.isPast || day.isSunday,
-                          'text-slate-700 hover:bg-blue-50 hover:text-blue-700': !day.isPast && !day.isSunday && form.appointment_date !== day.dateStr && !day.isToday,
-                        }"
+                        :disabled="day.isDisabled"
+                        :title="day.blockedReason ?? undefined"
+                        @click="!day.isDisabled && selectDate(day.dateStr)"
+                        class="relative w-full aspect-square flex flex-col items-center justify-center text-sm rounded-lg transition-all font-medium"
+                        :class="dayClass(day)"
                       >
-                        {{ day.day }}
+                        <span :class="{ 'line-through': day.isBlocked || day.isFullyBooked }">{{ day.day }}</span>
+                        <!-- Részlegesen foglalt jelző pont -->
+                        <span
+                          v-if="day.isPartiallyBooked && !day.isDisabled"
+                          class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-orange-400"
+                        ></span>
                       </button>
+                    </div>
+                  </div>
+                  <!-- Jelmagyarázat -->
+                  <div class="px-4 pb-3 flex flex-wrap gap-x-4 gap-y-1.5">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-3 h-3 rounded bg-red-100 border border-red-200 inline-block"></span>
+                      <span class="text-xs text-slate-400">Ünnepnap / zárva</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-3 h-3 rounded bg-slate-200 inline-block"></span>
+                      <span class="text-xs text-slate-400">Teljesen foglalt</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-orange-400 inline-block"></span>
+                      <span class="text-xs text-slate-400">Részben foglalt</span>
                     </div>
                   </div>
                 </div>
@@ -210,11 +212,14 @@
                     v-for="slot in timeSlots"
                     :key="slot"
                     type="button"
-                    @click="form.start_time = slot"
-                    class="py-2 px-2 text-sm rounded-xl border-2 font-medium transition-all"
+                    :disabled="isSlotBooked(slot)"
+                    @click="!isSlotBooked(slot) && (form.start_time = slot)"
+                    class="py-2 px-2 text-sm rounded-xl border-2 font-medium transition-all relative"
                     :class="form.start_time === slot
                       ? 'border-blue-500 bg-blue-600 text-white'
-                      : 'border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-700'"
+                      : isSlotBooked(slot)
+                        ? 'border-slate-100 bg-slate-50 text-slate-300 cursor-not-allowed line-through'
+                        : 'border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-700'"
                   >
                     {{ slot }}
                   </button>
@@ -330,6 +335,17 @@ interface CalendarDay {
   isPast: boolean
   isToday: boolean
   isSunday: boolean
+  isBlocked: boolean
+  isFullyBooked: boolean
+  isPartiallyBooked: boolean
+  isDisabled: boolean
+  blockedReason: string | null
+}
+
+interface AvailabilityData {
+  blocked_dates: Record<string, string>
+  booked_slots: Record<string, string[]>
+  fully_booked_dates: string[]
 }
 
 const { user, isLoggedIn } = useAuth()
@@ -341,6 +357,12 @@ const submitting = ref(false)
 const bookingSuccess = ref(false)
 const submitError = ref('')
 const errors = ref<Record<string, string>>({})
+
+// Elérhetőségi adatok
+const availabilityLoading = ref(false)
+const blockedDates = ref<Record<string, string>>({})
+const bookedSlots = ref<Record<string, string[]>>({})
+const fullyBookedDates = ref<string[]>([])
 
 const today = new Date()
 const calendarYear = ref(today.getFullYear())
@@ -361,6 +383,42 @@ const monthNames = ['Január','Február','Március','Április','Május','Június
 
 const calendarTitle = computed(() => `${calendarYear.value}. ${monthNames[calendarMonth.value]}`)
 
+async function fetchAvailability(year: number, month: number) {
+  availabilityLoading.value = true
+  try {
+    const data = await api<AvailabilityData>(
+      `/appointments/availability?year=${year}&month=${month + 1}`
+    )
+    blockedDates.value = data.blocked_dates
+    bookedSlots.value = data.booked_slots
+    fullyBookedDates.value = data.fully_booked_dates
+  } catch {
+    // Ha nem sikerül, üres adatokkal dolgozunk
+  } finally {
+    availabilityLoading.value = false
+  }
+}
+
+// Ha a felhasználó hónapot vált, töltjük az új adatokat
+watch([calendarYear, calendarMonth], ([y, m]) => fetchAvailability(y, m))
+
+function isSlotBooked(slot: string): boolean {
+  if (!form.value.appointment_date) return false
+  return (bookedSlots.value[form.value.appointment_date] ?? []).includes(slot)
+}
+
+function dayClass(day: CalendarDay): Record<string, boolean> {
+  const isSelected = form.value.appointment_date === day.dateStr
+  return {
+    'bg-blue-600 text-white shadow-sm': isSelected,
+    'bg-red-50 text-red-300 cursor-not-allowed': !isSelected && day.isBlocked,
+    'bg-slate-200 text-slate-400 cursor-not-allowed': !isSelected && day.isFullyBooked,
+    'bg-blue-50 text-blue-700 ring-1 ring-blue-200': !isSelected && day.isToday && !day.isDisabled,
+    'text-slate-300 cursor-not-allowed': !isSelected && (day.isPast || day.isSunday) && !day.isBlocked && !day.isFullyBooked,
+    'text-slate-700 hover:bg-blue-50 hover:text-blue-700': !isSelected && !day.isDisabled && !day.isToday,
+  }
+}
+
 const calendarDays = computed(() => {
   const year = calendarYear.value
   const month = calendarMonth.value
@@ -368,19 +426,31 @@ const calendarDays = computed(() => {
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate())
 
-  // Hétfőtől indul a hét (0=H, 6=V)
   const offset = firstDow === 0 ? 6 : firstDow - 1
   const days: Array<CalendarDay | null> = Array.from({ length: offset }, () => null)
 
   for (let d = 1; d <= daysInMonth; d++) {
     const date = new Date(year, month, d)
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+
+    const isPast         = date < todayDate
+    const isSunday       = date.getDay() === 0
+    const isBlocked      = dateStr in blockedDates.value
+    const isFullyBooked  = fullyBookedDates.value.includes(dateStr)
+    const slots          = bookedSlots.value[dateStr] ?? []
+    const isPartiallyBooked = slots.length > 0 && !isFullyBooked
+
     days.push({
       day: d,
       dateStr,
-      isPast: date < todayDate,
+      isPast,
       isToday: date.getTime() === todayDate.getTime(),
-      isSunday: date.getDay() === 0,
+      isSunday,
+      isBlocked,
+      isFullyBooked,
+      isPartiallyBooked,
+      isDisabled: isPast || isSunday || isBlocked || isFullyBooked,
+      blockedReason: isBlocked ? (blockedDates.value[dateStr] ?? null) : null,
     })
   }
 
@@ -412,6 +482,10 @@ const contactInfo = [
 
 function selectDate(dateStr: string) {
   form.value.appointment_date = dateStr
+  // Ha a korábban választott időpont ezen a napon már foglalt, töröljük
+  if (form.value.start_time && isSlotBooked(form.value.start_time)) {
+    form.value.start_time = ''
+  }
 }
 
 function prevMonth() {
@@ -499,13 +573,14 @@ async function submitBooking() {
 }
 
 onMounted(async () => {
-  try {
-    const data = await api<{ types: AppointmentType[] }>('/appointment-types')
-    appointmentTypes.value = data.types
-  } catch {
-    // Ha nincs adat, üres marad a lista
-  } finally {
-    typesLoading.value = false
-  }
+  // Szolgáltatások és az aktuális hónap elérhetőségének betöltése párhuzamosan
+  await Promise.allSettled([
+    api<{ types: AppointmentType[] }>('/appointment-types').then(data => {
+      appointmentTypes.value = data.types
+    }).finally(() => {
+      typesLoading.value = false
+    }),
+    fetchAvailability(calendarYear.value, calendarMonth.value),
+  ])
 })
 </script>
