@@ -4,14 +4,20 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    '@unocss/nuxt',        // Tailwind helyett
+    '@unocss/nuxt',
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/icon',
     '@nuxt/image',
     '@nuxt/test-utils'
-    // '@nuxt/ui' - temporarily disabled due to Tailwind conflict
   ],
+
+  fonts: {
+    families: [
+      { name: 'Outfit', weights: ['400', '500', '600', '700', '800', '900'] },
+      { name: 'DM Sans', weights: ['300', '400', '500', '600', '700'] },
+    ]
+  },
 
   runtimeConfig: {
     public: {

@@ -1,21 +1,22 @@
 <template>
   <div class="min-h-screen bg-white">
 
-    <!-- Floating navbar wrapper - pointer-events-none hogy az oldalon átlátszón klikelhető legyen -->
+    <!-- Floating navbar -->
     <div class="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-3 pointer-events-none">
       <nav
-        class="w-full max-w-5xl pointer-events-auto bg-gradient-to-r from-blue-900 to-blue-800 rounded-2xl shadow-xl transition-all duration-300 ease-in-out"
+        class="w-full max-w-5xl pointer-events-auto rounded-2xl shadow-xl transition-all duration-300 ease-in-out"
         :class="navVisible ? 'translate-y-0 opacity-100' : '-translate-y-[calc(100%+16px)] opacity-0'"
+        style="background: linear-gradient(to right, #1e3a8a, #1e40af);"
       >
         <div class="px-5 sm:px-6">
           <div class="flex justify-between items-center h-14">
 
-            <!-- Logo -->
-            <NuxtLink to="/" class="flex items-center rounded-lg hover:opacity-80 transition-opacity">
-              <img src="/img/logo.png" alt="Optika Logo" class="h-6 w-auto object-contain" />
+            <!-- Logo — az OPTIKA szöveg már benne van a képben -->
+            <NuxtLink to="/" class="flex items-center rounded-lg hover:opacity-80 transition-opacity no-underline">
+              <img src="/img/logo.png" alt="Optika Logo" class="h-7 w-auto object-contain" />
             </NuxtLink>
 
-            <!-- Desktop linkek -->
+            <!-- Desktop links -->
             <div class="hidden md:flex items-center gap-1">
               <NuxtLink
                 v-for="link in navLinks"
@@ -28,7 +29,7 @@
               </NuxtLink>
             </div>
 
-            <!-- Auth gomb jobbra -->
+            <!-- Auth dropdown -->
             <div class="hidden md:flex items-center relative">
               <button
                 @click="userMenuOpen = !userMenuOpen"
@@ -46,7 +47,6 @@
                 </svg>
               </button>
 
-              <!-- Dropdown -->
               <transition
                 enter-active-class="transition ease-out duration-150"
                 enter-from-class="opacity-0 -translate-y-1 scale-95"
@@ -64,15 +64,11 @@
                       <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Fiók</p>
                     </div>
                     <NuxtLink to="/login" @click="userMenuOpen = false" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition no-underline">
-                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                      </svg>
+                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
                       <span class="font-medium">Bejelentkezés</span>
                     </NuxtLink>
                     <NuxtLink to="/register" @click="userMenuOpen = false" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition no-underline">
-                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                      </svg>
+                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
                       <span class="font-medium">Regisztráció</span>
                     </NuxtLink>
                   </template>
@@ -81,22 +77,16 @@
                       <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bejelentkezve</p>
                     </div>
                     <a v-if="isAdminOrStaff" :href="adminPanelUrl" target="_blank" @click="userMenuOpen = false" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition no-underline">
-                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
+                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                       <span class="font-medium">Admin Panel</span>
                     </a>
                     <NuxtLink v-else to="/profile" @click="userMenuOpen = false" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition no-underline">
-                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
+                      <svg class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                       <span class="font-medium">Profil</span>
                     </NuxtLink>
                     <div class="border-t border-slate-100 mt-1 pt-1">
                       <button @click="handleLogout" class="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition">
-                        <svg class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
+                        <svg class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                         <span class="font-medium">Kijelentkezés</span>
                       </button>
                     </div>
@@ -105,7 +95,7 @@
               </transition>
             </div>
 
-            <!-- Mobil hamburger -->
+            <!-- Mobile hamburger -->
             <button
               @click="mobileMenuOpen = !mobileMenuOpen"
               class="md:hidden text-white p-2 rounded-xl hover:bg-blue-800 transition"
@@ -119,7 +109,7 @@
           </div>
         </div>
 
-        <!-- Mobil menü -->
+        <!-- Mobile menu -->
         <transition
           enter-active-class="transition-all duration-200 ease-out"
           enter-from-class="opacity-0 max-h-0"
@@ -160,14 +150,62 @@
       </nav>
     </div>
 
-    <!-- Floating navbar átfedi a tartalmat, ezért az oldalak saját maguk kezelik a top paddinget -->
     <main>
       <slot />
     </main>
 
-    <footer class="bg-slate-900 text-slate-400 py-10 mt-auto">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-sm">&copy; 2025 Optika. Minden jog fenntartva.</p>
+    <!-- Footer -->
+    <footer class="bg-blue-950 pt-12 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-10 mb-10">
+
+          <div>
+            <img src="/img/logo.png" alt="Optika Logo" class="h-8 w-auto object-contain mb-4" style="filter: brightness(0) invert(1);" />
+            <p class="text-sm leading-relaxed text-slate-400">
+              Professzionális szemészeti szolgáltatások és prémium szemüvegek több évtizede.
+            </p>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Navigáció</p>
+            <div class="space-y-2">
+              <NuxtLink
+                v-for="link in navLinks"
+                :key="link.to"
+                :to="link.to"
+                class="block text-sm text-slate-400 no-underline hover:text-white transition-colors"
+              >
+                {{ link.label }}
+              </NuxtLink>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Kapcsolat</p>
+            <div class="space-y-3">
+              <div class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <span class="text-sm text-slate-400">Főutca 12., Város</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                <span class="text-sm text-slate-400">+40 xxx xxx xxx</span>
+              </div>
+              <div class="flex items-start gap-2.5">
+                <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                <span class="text-sm text-slate-400">info@optika.ro</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-blue-900 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p class="text-sm text-slate-500">&copy; 2025 Optika. Minden jog fenntartva.</p>
+          <div class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+            <span class="text-xs text-slate-500">Professzionális szemészet</span>
+          </div>
+        </div>
       </div>
     </footer>
   </div>
@@ -179,7 +217,6 @@ const userMenuOpen = ref(false)
 const isScrolled = ref(false)
 const mouseNearTop = ref(false)
 
-// Navbar látható ha az oldal tetején vagyunk, VAGY az egér a viewport tetején van
 const navVisible = computed(() => !isScrolled.value || mouseNearTop.value)
 
 const navLinks = [
@@ -201,14 +238,8 @@ const handleLogout = async () => {
 }
 
 onMounted(() => {
-  const handleScroll = () => {
-    isScrolled.value = window.scrollY > 80
-  }
-
-  const handleMouseMove = (e) => {
-    // Ha az egér a viewport felső 72px-én van, mutasd a navbart
-    mouseNearTop.value = e.clientY < 72
-  }
+  const handleScroll = () => { isScrolled.value = window.scrollY > 80 }
+  const handleMouseMove = (e) => { mouseNearTop.value = e.clientY < 72 }
 
   window.addEventListener('scroll', handleScroll, { passive: true })
   window.addEventListener('mousemove', handleMouseMove, { passive: true })
