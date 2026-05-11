@@ -2,18 +2,23 @@
   <div>
     <!-- HERO -->
     <section class="relative overflow-hidden bg-blue-950 flex items-center" style="min-height:100vh;padding-top:7rem;padding-bottom:5rem;">
-      <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(15,23,42,.8) 0%,rgba(30,58,138,.55) 60%,rgba(37,99,235,.3) 100%);"></div>
-      <div class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" style="width:520px;height:520px;opacity:.18;">
-        <svg viewBox="0 0 500 500" fill="none" class="w-full h-full">
-          <circle cx="250" cy="250" r="230" stroke="white" stroke-width="1"/>
-          <circle cx="250" cy="250" r="185" stroke="white" stroke-width="1"/>
-          <circle cx="250" cy="250" r="140" stroke="white" stroke-width="1.5"/>
-          <circle cx="250" cy="250" r="95" stroke="white" stroke-width="1.5"/>
-          <circle cx="250" cy="250" r="50" stroke="white" stroke-width="2"/>
-          <circle cx="250" cy="250" r="15" fill="white" opacity=".4"/>
-          <line x1="250" y1="10" x2="250" y2="490" stroke="white" stroke-width=".5"/>
-          <line x1="10" y1="250" x2="490" y2="250" stroke="white" stroke-width=".5"/>
-        </svg>
+      <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(30,58,138,.35) 0%,transparent 55%);"></div>
+      <!-- Jobb fél: szem kép + célkereszt -->
+      <div class="absolute right-0 inset-y-0 w-1/2 pointer-events-none overflow-hidden">
+        <img src="/img/about-bg.jpg" class="w-full h-full object-cover" style="object-position: 30% 50%" alt="">
+        <div class="absolute inset-0" style="background:linear-gradient(to right,rgb(15,23,42) 0%,rgba(15,23,42,.85) 15%,rgba(15,23,42,.5) 38%,rgba(15,23,42,.15) 62%,transparent 100%);"></div>
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" style="width:520px;height:520px;opacity:.32;">
+          <svg viewBox="0 0 500 500" fill="none" class="w-full h-full">
+            <circle cx="250" cy="250" r="230" stroke="white" stroke-width="1"/>
+            <circle cx="250" cy="250" r="185" stroke="white" stroke-width="1"/>
+            <circle cx="250" cy="250" r="140" stroke="white" stroke-width="1.5"/>
+            <circle cx="250" cy="250" r="95" stroke="white" stroke-width="1.5"/>
+            <circle cx="250" cy="250" r="50" stroke="white" stroke-width="2"/>
+            <circle cx="250" cy="250" r="15" fill="white" opacity=".4"/>
+            <line x1="250" y1="10" x2="250" y2="490" stroke="white" stroke-width=".5"/>
+            <line x1="10" y1="250" x2="490" y2="250" stroke="white" stroke-width=".5"/>
+          </svg>
+        </div>
       </div>
       <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div class="max-w-2xl">

@@ -14,7 +14,7 @@
           <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);padding:36px 40px;text-align:center;">
-              <p style="margin:0;color:#bfdbfe;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Optika</p>
+              <p style="margin:0;color:#bfdbfe;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">BIOOPTICA</p>
               <h1 style="margin:12px 0 0;color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-.02em;">Időpont kérés</h1>
             </td>
           </tr>
@@ -62,7 +62,7 @@
                 Kérjük, látogassa meg weboldalunkat egy másik időpont foglalásához, vagy hívja ügyfélszolgálatunkat.
               </p>
               <p style="margin:0;color:#374151;font-size:15px;line-height:1.6;">
-                Megértését köszönjük,<br><strong>Optika csapata</strong>
+                Megértését köszönjük,<br><strong>BIOOPTICA csapata</strong>
               </p>
             </td>
           </tr>
@@ -70,7 +70,7 @@
           <!-- Footer -->
           <tr>
             <td style="background:#f8fafc;padding:24px 40px;text-align:center;border-top:1px solid #e2e8f0;">
-              <p style="margin:0;color:#94a3b8;font-size:12px;">Főutca 12. · +40 xxx xxx xxx · info@optika.ro</p>
+              <p style="margin:0;color:#94a3b8;font-size:12px;">Decemberi Forradalom utca 3. · +40 755 088 373 · office@biooptica.ro</p>
             </td>
           </tr>
 
